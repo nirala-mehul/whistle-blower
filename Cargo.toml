@@ -2,8 +2,7 @@
 resolver = "2"
 
 members = [
-    "petition",
-    "zk-average-salary",
+    "petition"
 ]
 
 [workspace.package]
