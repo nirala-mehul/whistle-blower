@@ -23,7 +23,7 @@ struct Report {
 }
 
 
-/// The state of the petition, which is persisted on-chain.
+/// The state of the whistleblower, which is persisted on-chain.
 #[state]
 struct ContractState {
     private_key: String,
@@ -35,7 +35,7 @@ struct ContractState {
 }
 
 
-/// Initialize a new petition to sign.
+/// Initialize a new whistleblower to sign.
 ///
 /// # Arguments
 ///
@@ -43,13 +43,13 @@ struct ContractState {
 ///
 /// # Returns
 ///
-/// The initial state of the petition, with no signers.
+/// The initial state of the whistleblower, with no signers.
 ///
 #[init]
 fn initialize(_ctx: ContractContext, private_key: String) -> ContractState {
     assert_ne!(
         private_key, "",
-        "The description af a petition cannot be empty."
+        "The description af a whistleblower cannot be empty."
     );
 
     ContractState {

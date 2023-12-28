@@ -1,6 +1,6 @@
-# Petition example application
+# Whistleblower example application
 
-A Petition shows how to collect signatures for showing interest in
+A Whistleblower shows how to collect signatures for showing interest in
 a specific change in the world.
 
 The
@@ -11,27 +11,27 @@ our [smart contract documentation](https://partisiablockchain.gitlab.io/document
 
 Throughout this example, when we write `run task`, then press `Ctrl+Shift+B`.
 
-## Deploy a Petition contract
+## Deploy a Whistleblower contract
 
-Run task `Deploy Petition Contract`, the task will prompt asking for the account to deploy with,
-and what the description for the Petition should be.
+Run task `Deploy Whistleblower Contract`, the task will prompt asking for the account to deploy with,
+and what the description for the Whistleblower should be.
 
 The contract can also be deployed by running this command.
 
 ```shell
-cargo partisia-contract cli tx deploy --gas 2500000 --privatekey Account-A.pk  target/wasm32-unknown-unknown/release/petition.wasm target/wasm32-unknown-unknown/release/petition.abi 'My Petition is Awesome'
+cargo partisia-contract cli tx deploy --gas 2500000 --privatekey Account-A.pk  target/wasm32-unknown-unknown/release/whistleblower.wasm target/wasm32-unknown-unknown/release/whistleblower.abi 'My Whistleblower is Awesome'
 ```
 
 The task and command will provide you with a link to view the deployed contract in
 the [browser](https://browser.testnet.partisiablockchain.com).
 
-### Use the web frontend to view and sign the petition
+### Use the web frontend to view and sign the whistleblower
 
-Run task `Start Petition Frontend`.
-This will start a web frontend able to interact with a deployed petition contract.
+Run task `Start Whistleblower Frontend`.
+This will start a web frontend able to interact with a deployed whistleblower contract.
 
 The frontend can also be started by running the two following commands standing in
-the `petition-frontend` folder.
+the `whistleblower-frontend` folder.
 
 ```shell
 npm install
@@ -41,24 +41,24 @@ npm install
 npm start
 ```
 
-Input the address to the deployed Petition contract and click `Set address`. The address can be
+Input the address to the deployed Whistleblower contract and click `Set address`. The address can be
 found in the browser.
-The frontend will show your Petition in the state section.
-To sign the petition you need to log in
+The frontend will show your Whistleblower in the state section.
+To sign the whistleblower you need to log in
 with [an account](https://partisiablockchain.gitlab.io/documentation/pbc-fundamentals/create-an-account.html)
 that [has gas](https://partisiablockchain.gitlab.io/documentation/smart-contracts/gas/how-to-get-testnet-gas.html).
 
 Copy one of the private keys, (`Account-A.pk`, `Account-B.pk` or `Account-C.pk`),
-into the form and click `Login using private key`. You can now sign the petition by clicking
+into the form and click `Login using private key`. You can now sign the whistleblower by clicking
 the `Sign` button. The state will then be updated with the new signer.
 
-### Sign the Petition from your commandline
+### Sign the Whistleblower from your commandline
 
-Either run the task `Sign Petition`, the task will prompt asking for the account to sign the
-petition
-with and an address for a deployed petition contract
+Either run the task `Sign Whistleblower`, the task will prompt asking for the account to sign the
+whistleblower
+with and an address for a deployed whistleblower contract
 
-You can also sign the Petition by running the following command in your terminal.
+You can also sign the Whistleblower by running the following command in your terminal.
 
 ```shell
 cargo partisia-contract cli tx action --gas 20000 --privatekey Account-C.pk {contract-address-on-chain} sign
@@ -84,12 +84,12 @@ our [active Discord community](https://partisiablockchain.gitlab.io/documentatio
    the [voting contract](https://gitlab.com/partisiablockchain/language/example-contracts/-/blob/main/voting/src/lib.rs?ref_type=heads).
    If you cannot find the public address of those accounts, log into the browser with your
    private key, go to [your account](https://browser.testnet.partisiablockchain.com/account).
-4. Add an action that updates the description of the petition contract to a constant.
+4. Add an action that updates the description of the whistleblower contract to a constant.
    You can visit the count action in
    the [voting contract](https://gitlab.com/partisiablockchain/language/example-contracts/-/blob/main/voting/src/lib.rs?ref_type=heads#L116)
    for inspiration.
 5. Add a button to call the new action in the frontend.
 6. Add a parameter to the above action to remove the hardcoded part of the action.
-7. Add an input field to the frontend, where the user can enter the new Petition description.
-8. Try to create an action that can un-sign a signed user from the petition contract. Also add a
+7. Add an input field to the frontend, where the user can enter the new Whistleblower description.
+8. Try to create an action that can un-sign a signed user from the whistleblower contract. Also add a
    button to the frontend.

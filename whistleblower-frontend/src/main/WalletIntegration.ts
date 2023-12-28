@@ -26,7 +26,7 @@ import { BigEndianByteOutput } from "@secata-public/bitmanipulation-ts";
 import { Rpc, TransactionPayload } from "./client/TransactionData";
 import { ec } from "elliptic";
 import { CryptoUtils } from "./client/CryptoUtils";
-import { deserializePetitionState } from "./contract/PetitionGenerated";
+import { deserializeWhistleblowerState } from "./contract/WhistleblowerGenerated";
 import { BlockchainAddress } from "@partisiablockchain/abi-client";
 
 interface MetamaskRequestArguments {
@@ -335,7 +335,7 @@ export const updateContractState = () => {
       // Reads the state of the contract
       const stateBuffer = Buffer.from(contract.serializedContract.state.data, "base64");
 
-      const state = deserializePetitionState({ state: stateBuffer });
+      const state = deserializeWhistleblowerState({ state: stateBuffer });
 
       const stateHeader = <HTMLInputElement>document.querySelector("#state-header");
       const updateStateButton = <HTMLInputElement>document.querySelector("#update-state");

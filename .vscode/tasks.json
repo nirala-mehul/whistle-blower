@@ -2,9 +2,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Deploy Petition Contract",
+            "label": "Deploy Whistleblower Contract",
             "type": "shell",
-            "command": "cargo partisia-contract cli tx deploy --gas 2500000 --privatekey ${input:key}.pk target/wasm32-unknown-unknown/release/petition.wasm target/wasm32-unknown-unknown/release/petition.abi '${input:petition-description}'",
+            "command": "cargo partisia-contract cli tx deploy --gas 2500000 --privatekey ${input:key}.pk target/wasm32-unknown-unknown/release/whistleblower.wasm target/wasm32-unknown-unknown/release/whistleblower.abi '${input:whistleblower-description}'",
             "options": {
                 "cwd": "${workspaceFolder}"
             },
@@ -15,7 +15,7 @@
             }
         },
         {
-            "label": "Sign petition.",
+            "label": "Sign whistleblower.",
             "type": "shell",
             "command": "cargo partisia-contract cli tx action --gas 20000 --privatekey ${input:key}.pk ${input:contract-address} sign",
             "options": {
@@ -79,11 +79,11 @@
             }
         },
         {
-            "label": "Start Petition Frontend.",
+            "label": "Start Whistleblower Frontend.",
             "type": "shell",
             "command": "npm install; npm start",
             "options": {
-                "cwd": "${workspaceFolder}/petition-frontend"
+                "cwd": "${workspaceFolder}/whistleblower-frontend"
             },
             "group": {
                 "kind": "build",
@@ -114,8 +114,8 @@
             "type": "promptString"
         },
         {
-            "id": "petition-description",
-            "description": "The description to deploy a Petition contract with, so people can sign it, if they agree.",
+            "id": "whistleblower-description",
+            "description": "The description to deploy a Whistleblower contract with, so people can sign it, if they agree.",
             "type": "promptString"
         }
     ]

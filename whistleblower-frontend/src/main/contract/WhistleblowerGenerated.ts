@@ -29,19 +29,19 @@ const fileAbi: FileAbi = new AbiParser(
 
 type Option<K> = K | undefined;
 
-export interface PetitionState {
+export interface WhistleblowerState {
   signedBy: BlockchainAddress[];
   description: string;
 }
 
-export function newPetitionState(
+export function newWhistleblowerState(
   signedBy: BlockchainAddress[],
   description: string
-): PetitionState {
+): WhistleblowerState {
   return { signedBy, description };
 }
 
-function fromScValuePetitionState(structValue: ScValueStruct): PetitionState {
+function fromScValueWhistleblowerState(structValue: ScValueStruct): WhistleblowerState {
   return {
     signedBy: structValue
       .getFieldValue("signed_by")!
@@ -51,9 +51,9 @@ function fromScValuePetitionState(structValue: ScValueStruct): PetitionState {
   };
 }
 
-export function deserializePetitionState(state: StateBytes): PetitionState {
+export function deserializeWhistleblowerState(state: StateBytes): WhistleblowerState {
   const scValue = new StateReader(state.state, fileAbi.contract, state.avlTrees).readState();
-  return fromScValuePetitionState(scValue);
+  return fromScValueWhistleblowerState(scValue);
 }
 
 export interface SecretVarId {

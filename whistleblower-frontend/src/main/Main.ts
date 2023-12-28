@@ -16,7 +16,7 @@
  *
  */
 
-import { getPetitionApi, isConnected, setContractAddress } from "./AppState";
+import { getWhistleblowerApi, isConnected, setContractAddress } from "./AppState";
 import {
   connectMetaMaskWalletClick,
   connectMpcWalletClick,
@@ -68,7 +68,7 @@ function contractAddressClick() {
     console.error(`${address} is not a valid PBC address`);
   } else {
     const currentAddress = <HTMLInputElement>document.querySelector("#current-address");
-    currentAddress.innerHTML = `Petition Address: ${address}`;
+    currentAddress.innerHTML = `Whistleblower Address: ${address}`;
     const browserLink = <HTMLInputElement>document.querySelector("#browser-link");
     browserLink.innerHTML = `<a href="https://browser.testnet.partisiablockchain.com/contracts/${address}" target="_blank">Browser link</a>`;
     setContractAddress(address);
@@ -77,9 +77,9 @@ function contractAddressClick() {
   }
 }
 
-/** Action for the sign petition button */
+/** Action for the sign whistleblower button */
 function signAction() {
-  const api = getPetitionApi();
+  const api = getWhistleblowerApi();
   if (isConnected() && api !== undefined) {
     const browserLink = <HTMLInputElement>document.querySelector("#sign-transaction-link");
     browserLink.innerHTML = '<br><div class="loader"></div>';

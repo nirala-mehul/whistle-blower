@@ -17,7 +17,7 @@
  */
 
 import { TransactionApi } from "../client/TransactionApi";
-import { sign } from "./PetitionGenerated";
+import { sign } from "./WhistleblowerGenerated";
 import { getContractAddress } from "../AppState";
 
 /**
@@ -27,7 +27,7 @@ import { getContractAddress } from "../AppState";
  * The implementation uses the TransactionApi to send transactions, and ABI for the contract to be
  * able to build the RPC for the transfer transaction.
  */
-export class PetitionApi {
+export class WhistleblowerApi {
   private readonly transactionApi: TransactionApi;
 
   constructor(transactionApi: TransactionApi) {

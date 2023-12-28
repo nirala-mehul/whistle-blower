@@ -7,7 +7,7 @@ Read the documentation to better understand
 [the fundamentals of the Partisia Blockchain](https://partisiablockchain.gitlab.io/documentation/pbc-fundamentals/introduction-to-the-fundamentals.html)
 
 The repo contains two simple smart contracts with simple front-ends:
-The [petition contact](https://gitlab.com/partisiablockchain/language/example-contracts/-/tree/main/petition?ref_type=heads)
+The [whistleblower contact](https://gitlab.com/partisiablockchain/language/example-contracts/-/tree/main/whistleblower?ref_type=heads)
 and
 the [average salary contract](https://gitlab.com/partisiablockchain/language/example-contracts/-/tree/main/zk-average-salary?ref_type=heads)
 This is provided in a codespace, where all the tooling needed for developing smart contracts and
@@ -53,7 +53,7 @@ the [dev container documentation](https://docs.github.com/en/codespaces/developi
 We have included 2 challenge-based tutorials as part of your codespace, to help you learn and
 experiment.
 
-The first one explores the [Petition example application](tutorial/petition-example-application.md),
+The first one explores the [Whistleblower example application](tutorial/whistleblower-example-application.md),
 showing how to collect signatures for showing interests in making specific changes in the world. The
 application consists of a smart contract written in Rust and a web frontend written in TypeScript.
 

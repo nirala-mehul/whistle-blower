@@ -20,7 +20,7 @@ import { ContractAbi } from "@partisiablockchain/abi-client";
 import { ShardedClient } from "./client/ShardedClient";
 import { TransactionApi } from "./client/TransactionApi";
 import { ConnectedWallet } from "./ConnectedWallet";
-import { PetitionApi } from "./contract/PetitionApi";
+import { WhistleblowerApi } from "./contract/WhistleblowerApi";
 import { updateContractState } from "./WalletIntegration";
 
 export const CLIENT = new ShardedClient("https://node1.testnet.partisiablockchain.com", [
@@ -32,11 +32,11 @@ export const CLIENT = new ShardedClient("https://node1.testnet.partisiablockchai
 let contractAddress: string | undefined;
 let currentAccount: ConnectedWallet | undefined;
 let contractAbi: ContractAbi | undefined;
-let petitionApi: PetitionApi | undefined;
+let whistleblowerApi: WhistleblowerApi | undefined;
 
 export const setAccount = (account: ConnectedWallet | undefined) => {
   currentAccount = account;
-  setPetitionApi();
+  setWhistleblowerApi();
 };
 
 export const resetAccount = () => {
@@ -49,22 +49,22 @@ export const isConnected = () => {
 
 export const setContractAbi = (abi: ContractAbi) => {
   contractAbi = abi;
-  setPetitionApi();
+  setWhistleblowerApi();
 };
 
 export const getContractAbi = () => {
   return contractAbi;
 };
 
-export const setPetitionApi = () => {
+export const setWhistleblowerApi = () => {
   if (currentAccount != undefined) {
     const transactionApi = new TransactionApi(currentAccount, updateContractState);
-    petitionApi = new PetitionApi(transactionApi);
+    whistleblowerApi = new WhistleblowerApi(transactionApi);
   }
 };
 
-export const getPetitionApi = () => {
-  return petitionApi;
+export const getWhistleblowerApi = () => {
+  return whistleblowerApi;
 };
 
 export const getContractAddress = () => {
