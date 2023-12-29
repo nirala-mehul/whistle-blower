@@ -18,7 +18,7 @@
 
 import { Buffer } from "buffer";
 import PartisiaSdk from "partisia-sdk";
-import { CLIENT, resetAccount, setAccount, getContractAddress, isConnected } from "./AppState";
+import { CLIENT, resetAccount, setAccount, getContractAddress, isConnected, setContractAbi, getContractAbi } from "./AppState";
 import { TransactionApi } from "./client/TransactionApi";
 import { serializeTransaction } from "./client/TransactionSerialization";
 import { ConnectedWallet } from "./ConnectedWallet";
@@ -27,7 +27,12 @@ import { Rpc, TransactionPayload } from "./client/TransactionData";
 import { ec } from "elliptic";
 import { CryptoUtils } from "./client/CryptoUtils";
 import { deserializeWhistleblowerState } from "./contract/WhistleblowerGenerated";
-import { BlockchainAddress } from "@partisiablockchain/abi-client";
+import { BlockchainAddress, ContractAbi, StateReader } from "@partisiablockchain/abi-client";
+import {
+  AbiParser,
+} from "@partisiablockchain/abi-client";
+import { LittleEndianByteInput } from "@secata-public/bitmanipulation-ts";
+
 
 interface MetamaskRequestArguments {
   /** The RPC method to request. */
@@ -333,9 +338,17 @@ export const updateContractState = () => {
   CLIENT.getContractData<RawContractData>(address).then((contract) => {
     if (contract != null) {
       // Reads the state of the contract
+      if (getContractAbi() === undefined) {
+        const abiBuffer = Buffer.from(contract.abi, "base64");
+        const abi = new AbiParser(abiBuffer).parseAbi();
+        setContractAbi(abi.contract);
+      }
+
       const stateBuffer = Buffer.from(contract.serializedContract.state.data, "base64");
 
       const state = deserializeWhistleblowerState({ state: stateBuffer });
+
+      console.log(state)
 
       const stateHeader = <HTMLInputElement>document.querySelector("#state-header");
       const updateStateButton = <HTMLInputElement>document.querySelector("#update-state");
@@ -343,15 +356,15 @@ export const updateContractState = () => {
       updateStateButton.classList.remove("hidden");
 
       const description = <HTMLElement>document.querySelector("#description");
-      description.innerHTML = `${state.description}`;
+      // description.innerHTML = `${state.description}`;
 
       const signedBy = <HTMLElement>document.querySelector("#signed-by");
       signedBy.innerHTML = "";
-      state.signedBy.forEach((signer: BlockchainAddress) => {
-        const signerElement = document.createElement("div");
-        signerElement.innerHTML = signer.asString();
-        signedBy.appendChild(signerElement);
-      });
+      // state.signedBy.forEach((signer: BlockchainAddress) => {
+      //   const signerElement = document.createElement("div");
+      //   signerElement.innerHTML = signer.asString();
+      //   signedBy.appendChild(signerElement);
+      // });
 
       const contractState = <HTMLElement>document.querySelector("#contract-state");
       contractState.classList.remove("hidden");

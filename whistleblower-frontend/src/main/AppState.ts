@@ -31,13 +31,17 @@ export const CLIENT = new ShardedClient("https://node1.testnet.partisiablockchai
 
 let contractAddress: string | undefined;
 let currentAccount: ConnectedWallet | undefined;
-let contractAbi: ContractAbi | undefined;
+let contractAbi: ContractAbi;
 let whistleblowerApi: WhistleblowerApi | undefined;
 
 export const setAccount = (account: ConnectedWallet | undefined) => {
   currentAccount = account;
   setWhistleblowerApi();
 };
+
+export const getAccount = () => {
+  return currentAccount?.address ?? ""
+}
 
 export const resetAccount = () => {
   currentAccount = undefined;

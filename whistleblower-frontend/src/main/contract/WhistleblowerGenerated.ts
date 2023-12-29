@@ -17,42 +17,71 @@ import {
   TypeIndex,
   StateBytes,
   BlockchainAddress,
+  ScValueMap,
+  ScValueNumber,
 } from "@partisiablockchain/abi-client";
 import { BigEndianByteOutput } from "@secata-public/bitmanipulation-ts";
+import { getAccount, getContractAbi } from "../AppState";
 
-const fileAbi: FileAbi = new AbiParser(
-  Buffer.from(
-    "50424341424909050005020000000002010000000d5065746974696f6e537461746500000002000000097369676e65645f6279100d0000000b6465736372697074696f6e0b010000000b536563726574566172496400000001000000067261775f69640300000002010000000a696e697469616c697a65ffffffff0f000000010000000b6465736372697074696f6e0b02000000047369676e01000000000000",
-    "hex"
-  )
-).parseAbi();
 
 type Option<K> = K | undefined;
 
-export interface WhistleblowerState {
-  signedBy: BlockchainAddress[];
+interface Report {
+  id: number,
+  whistleblower_pseudonym: string;
   description: string;
+  claimed: boolean;
+  up_votes: number;
+  down_votes: number;
 }
 
-export function newWhistleblowerState(
-  signedBy: BlockchainAddress[],
-  description: string
-): WhistleblowerState {
-  return { signedBy, description };
+export interface WhistleblowerState {
+  whistleblowers: BlockchainAddress[];
+  whistleblower_reports: Map<string, number[]>;
+  reports: Map<number, Report>
+  owner: BlockchainAddress;
+  report_count: number;
 }
 
 function fromScValueWhistleblowerState(structValue: ScValueStruct): WhistleblowerState {
+  let whistleblower_reports = new Map<string, number[]>();
+  (structValue.getFieldValue("maps") as ScValueMap).map.forEach((v, k) => {
+    let whistleblower_pseudonym = k.stringValue();
+    let reportIds = v.setValue().values.map((sc1) => sc1.asBN().toNumber());
+    whistleblower_reports.set(whistleblower_pseudonym, reportIds);
+  });
+
+  let reports = new Map<number, Report>();
+  (structValue.getFieldValue("maps1") as ScValueMap).map.forEach((v, k) => {
+    const reportId = (k as ScValueNumber).asBN().toNumber();
+    const reportStruct = (v as ScValueStruct);
+    const report = {
+      id: reportStruct.getFieldValue("id")?.asBN().toNumber(),
+      whistleblower_pseudonym: reportStruct.getFieldValue("value")?.stringValue(),
+      description: reportStruct.getFieldValue("data")?.stringValue(),
+      up_votes: reportStruct.getFieldValue("inc")?.asBN().toNumber(),
+      down_votes: reportStruct.getFieldValue("dec")?.asBN().toNumber(),
+      claimed: false
+    } as Report;
+
+    reports.set(reportId, report);
+  })
+
   return {
-    signedBy: structValue
-      .getFieldValue("signed_by")!
+    whistleblowers: structValue
+      .getFieldValue("addresses")!
       .setValue()
       .values.map((sc1) => BlockchainAddress.fromBuffer(sc1.addressValue().value)),
-    description: structValue.getFieldValue("description")!.stringValue(),
+    whistleblower_reports,
+    reports,
+    owner: BlockchainAddress.fromBuffer(structValue.getFieldValue("owner")!.addressValue().value),
+    report_count: structValue.getFieldValue("count")!.asBN().toNumber(),
   };
 }
 
 export function deserializeWhistleblowerState(state: StateBytes): WhistleblowerState {
-  const scValue = new StateReader(state.state, fileAbi.contract, state.avlTrees).readState();
+  console.log(getContractAbi())
+  const scValue = new StateReader(state.state, getContractAbi(), state.avlTrees).readState();
   return fromScValueWhistleblowerState(scValue);
 }
 
@@ -64,19 +93,31 @@ export function newSecretVarId(rawId: number): SecretVarId {
   return { rawId };
 }
 
-function fromScValueSecretVarId(structValue: ScValueStruct): SecretVarId {
-  return {
-    rawId: structValue.getFieldValue("raw_id")!.asNumber(),
-  };
-}
-
-export function initialize(description: string): Buffer {
-  const fnBuilder = new FnRpcBuilder("initialize", fileAbi.contract);
-  fnBuilder.addString(description);
+export function initialize(): Buffer {
+  const fnBuilder = new FnRpcBuilder("initialize", getContractAbi());
   return fnBuilder.getBytes();
 }
 
-export function sign(): Buffer {
-  const fnBuilder = new FnRpcBuilder("sign", fileAbi.contract);
+export function addWhistleblower(address: string): Buffer {
+  const fnBuilder = new FnRpcBuilder("add_address", getContractAbi());
+  fnBuilder.addAddress(address);
+
+  return fnBuilder.getBytes();
+}
+
+export function addReport(report: string, public_key: string, pseudonym: string): Buffer {
+  const fnBuilder = new FnRpcBuilder("add_map", getContractAbi());
+  fnBuilder.addString(report);
+  fnBuilder.addString(public_key);
+  fnBuilder.addString(pseudonym);
+
+  return fnBuilder.getBytes();
+}
+
+export function vote(reportId: number, upVote: boolean): Buffer {
+  const fnBuilder = new FnRpcBuilder("incc", getContractAbi());
+  fnBuilder.addU64(reportId);
+  fnBuilder.addBool(upVote);
+
   return fnBuilder.getBytes();
 }

@@ -16,6 +16,7 @@
  *
  */
 
+import { WHISTLEBLOWER_CONTRACT_ADDRESS } from "../constants";
 import { getWhistleblowerApi, isConnected, setContractAddress } from "./AppState";
 import {
   connectMetaMaskWalletClick,
@@ -25,6 +26,12 @@ import {
   updateContractState,
   updateInteractionVisibility,
 } from "./WalletIntegration";
+
+function init() {
+  setContractAddress(WHISTLEBLOWER_CONTRACT_ADDRESS);
+  updateInteractionVisibility();
+  updateContractState();
+}
 
 // Setup event listener to connect to the MPC wallet browser extension
 const connectWallet = <Element>document.querySelector("#wallet-connect-btn");
@@ -83,13 +90,23 @@ function signAction() {
   if (isConnected() && api !== undefined) {
     const browserLink = <HTMLInputElement>document.querySelector("#sign-transaction-link");
     browserLink.innerHTML = '<br><div class="loader"></div>';
-    api
-      .sign()
-      .then((transactionHash) => {
-        browserLink.innerHTML = `<br><a href="https://browser.testnet.partisiablockchain.com/transactions/${transactionHash}" target="_blank">Transaction link in browser</a>`;
-      })
-      .catch((msg) => {
-        browserLink.innerHTML = `<br>${msg}`;
-      });
+
+    // api.addReport("ccc", "aaa", "aaa")
+    //   .then((transactionHash) => {
+    //   })
+    //   .catch((msg) => {
+    //     browserLink.innerHTML = `<br>${msg}`;
+    //   });
+
+    // api
+    //   .vote(0, true)
+    //   .then((transactionHash) => {
+    //     browserLink.innerHTML = `<br><a href="https://browser.testnet.partisiablockchain.com/transactions/${transactionHash}" target="_blank">Transaction link in browser</a>`;
+    //   })
+    //   .catch((msg) => {
+    //     browserLink.innerHTML = `<br>${msg}`;
+    //   });
   }
 }
+
+init();
