@@ -11,6 +11,10 @@ use pbc_contract_common::address::Address;
 use pbc_contract_common::context::ContractContext;
 use pbc_contract_common::sorted_vec_map::{SortedVecMap, SortedVecSet};
 use read_write_state_derive::ReadWriteState;
+use ed25519_dalek::PublicKey;
+use ed25519_dalek::Signature;
+use ed25519_dalek::Verifier;
+use hex;
 
 #[derive(ReadWriteState, CreateTypeSpec, Clone)]
 struct Report {
@@ -114,17 +118,20 @@ fn vote(ctx: ContractContext, state: ContractState, report_id: u64, upvote: bool
     return new_state
 }
 
-fn get_my_reports(ctx: ContractContext, state: ContractState, pkey: String, whistleblower_pseudonym: String) -> SortedVecSet<u64> {
-    verify(ctx.sender, pkey, whistleblower_pseudonym.clone());
+fn verify(address: Address, public_key_hex: String, pseudonym_hex: String) {
+    let mut user_address: [u8; 21] = [0; 21];
+    user_address[1..].copy_from_slice(&address.identifier);
 
-    if let Some(report_ids) = state.whistleblower_reports.get(&whistleblower_pseudonym) {
-        return report_ids.clone();
-    }
-    return SortedVecSet::new();
+    verify_signature(&public_key_hex, &user_address,&pseudonym_hex);
 }
 
-fn verify(address: Address, public_key_hex: String, pseudonym_hex: String) {
-
+fn verify_signature(public_key_hex: &str, message: &[u8], signature_hex: &str) {
+    let public_key = PublicKey::from_bytes(&hex::decode(public_key_hex).unwrap()).unwrap();
+    let signature: Signature = Signature::from_bytes(&hex::decode(signature_hex).unwrap()).unwrap();
+    assert!(
+        public_key.verify(&message, &signature).is_ok(),
+        "UnAuthorized"
+    );
 }
 
 

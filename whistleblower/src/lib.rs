@@ -11,6 +11,10 @@ use pbc_contract_common::address::Address;
 use pbc_contract_common::context::ContractContext;
 use pbc_contract_common::sorted_vec_map::{SortedVecMap, SortedVecSet};
 use read_write_state_derive::ReadWriteState;
+use ed25519_dalek::PublicKey;
+use ed25519_dalek::Signature;
+use ed25519_dalek::Verifier;
+use hex;
 
 #[derive(ReadWriteState, CreateTypeSpec, Clone)]
 pub struct MapStruct {
@@ -96,16 +100,6 @@ fn add_map(ctx: ContractContext, state: ContractState, data: String, pkey: Strin
     new_state
 }
 
-
-pub fn my(ctx: ContractContext, state: ContractState, pkey: String, value: String) -> SortedVecSet<u64> {
-    verify(ctx.sender, pkey, value.clone());
-
-    if let Some(report_ids) = state.maps.get(&value) {
-        return report_ids.clone();
-    }
-    return SortedVecSet::new();
-}
-
 #[action(shortname = 0x03)]
 fn incc(ctx: ContractContext, state: ContractState, report_id: u64, upvote: bool) -> ContractState {
     let mut new_state = state;
@@ -121,7 +115,18 @@ fn incc(ctx: ContractContext, state: ContractState, report_id: u64, upvote: bool
     new_state
 }
 
-fn verify(address: Address, data: String, value: String) {
+fn verify(address: Address, key: String, value: String) {
+    let mut user_address: [u8; 21] = [0; 21];
+    user_address[1..].copy_from_slice(&address.identifier);
 
+    verify_signature(&key, &user_address,&value);
 }
 
+fn verify_signature(key: &str, message: &[u8], signature_hex: &str) {
+    let public_key = PublicKey::from_bytes(&hex::decode(key).unwrap()).unwrap();
+    let signature: Signature = Signature::from_bytes(&hex::decode(signature_hex).unwrap()).unwrap();
+    assert!(
+        public_key.verify(&message, &signature).is_ok(),
+        "UnAuthorized"
+    );
+}
