@@ -18,7 +18,7 @@
 
 import { Buffer } from "buffer";
 import PartisiaSdk from "partisia-sdk";
-import { CLIENT, resetAccount, setAccount, getContractAddress, isConnected, setContractAbi, getContractAbi } from "./AppState";
+import { CLIENT, resetAccount, setAccount, getContractAddress, setContractAbi, getContractAbi } from "./AppState";
 import { TransactionApi } from "./client/TransactionApi";
 import { serializeTransaction } from "./client/TransactionSerialization";
 import { ConnectedWallet } from "./ConnectedWallet";
@@ -27,11 +27,9 @@ import { Rpc, TransactionPayload } from "./client/TransactionData";
 import { ec } from "elliptic";
 import { CryptoUtils } from "./client/CryptoUtils";
 import { deserializeWhistleblowerState } from "./contract/WhistleblowerGenerated";
-import { BlockchainAddress, ContractAbi, StateReader } from "@partisiablockchain/abi-client";
 import {
   AbiParser,
 } from "@partisiablockchain/abi-client";
-import { LittleEndianByteInput } from "@secata-public/bitmanipulation-ts";
 
 
 interface MetamaskRequestArguments {
@@ -389,11 +387,11 @@ const toggleVisibility = (selector: string) => {
   }
 };
 
-export const updateInteractionVisibility = () => {
-  const contractInteraction = <HTMLElement>document.querySelector("#contract-interaction");
-  if (isConnected() && getContractAddress() !== undefined) {
-    contractInteraction.classList.remove("hidden");
-  } else {
-    contractInteraction.classList.add("hidden");
-  }
-};
+// export const updateInteractionVisibility = () => {
+//   const contractInteraction = <HTMLElement>document.querySelector("#contract-interaction");
+//   if (isConnected() && getContractAddress() !== undefined) {
+//     contractInteraction.classList.remove("hidden");
+//   } else {
+//     contractInteraction.classList.add("hidden");
+//   }
+// };
