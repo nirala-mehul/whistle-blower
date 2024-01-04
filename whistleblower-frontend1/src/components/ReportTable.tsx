@@ -19,6 +19,8 @@ import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
 import { Report } from "../contract/WhistleblowerGenerated";
 import { shortenTextWithEllipses } from "../utils";
+import { Chip } from "@mui/material";
+import { Cancel, CheckCircle, Reviews, Task } from "@mui/icons-material";
 
 type Order = "asc" | "desc";
 
@@ -26,7 +28,7 @@ interface HeadCell {
   disablePadding: boolean;
   id: keyof Report;
   label: string;
-  numeric: boolean;
+  numeric: boolean | undefined;
 }
 
 const headCells: readonly HeadCell[] = [
@@ -50,7 +52,7 @@ const headCells: readonly HeadCell[] = [
   },
   {
     id: "status",
-    numeric: true,
+    numeric: undefined,
     disablePadding: false,
     label: "Status",
   },
@@ -179,7 +181,9 @@ export default function ReportTable({ reports, onSelectReport }: IProps) {
                     <TableCell align="left">
                       {shortenTextWithEllipses(row.whistleblower_pseudonym)}
                     </TableCell>
-                    <TableCell align="right">{row.status}</TableCell>
+                    <TableCell align="center">
+                      {GetStatus(row.status)}
+                    </TableCell>
                     <TableCell align="right">{row.up_votes}</TableCell>
                     <TableCell align="right">{row.down_votes}</TableCell>
                   </TableRow>
@@ -211,6 +215,14 @@ export default function ReportTable({ reports, onSelectReport }: IProps) {
   );
 }
 
+function GetStatus(status?: number) {
+  if (status) {
+    if (status === 2) return <Chip label={"Approved"} icon={<CheckCircle />} />;
+    if (status === 1) return <Chip label={"None"} icon={<Cancel />} />;
+  }
+  return <Chip label={"Under review"} />;
+}
+
 function EnhancedTableHead(props: EnhancedTableProps) {
   const { order, orderBy, rowCount, onRequestSort } = props;
   const createSortHandler =
@@ -224,7 +236,13 @@ function EnhancedTableHead(props: EnhancedTableProps) {
         {headCells.map((headCell) => (
           <TableCell
             key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
+            align={
+              headCell.numeric === undefined
+                ? "center"
+                : headCell.numeric
+                ? "right"
+                : "left"
+            }
             padding={"normal"}
             sortDirection={orderBy === headCell.id ? order : false}
           >

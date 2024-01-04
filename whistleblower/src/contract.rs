@@ -108,6 +108,7 @@ fn add_report(ctx: ContractContext, state: ContractState, timestamp: String, rep
 
 #[action(shortname = 0x03)]
 fn approve(ctx: ContractContext, state: ContractState, report_id: u64, approve: bool) -> ContractState {
+    assert_eq!(ctx.sender, state.owner, "Only owner can approve");
     let mut new_state = state;
     
     if let Some(report) = new_state.reports.get_mut(&report_id) {

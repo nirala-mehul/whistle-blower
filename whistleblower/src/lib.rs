@@ -106,6 +106,7 @@ fn add_map(ctx: ContractContext, state: ContractState,timestamp: String, data: S
 
 #[action(shortname = 0x03)]
 fn check(ctx: ContractContext, state: ContractState, id: u64, yes: bool) -> ContractState {
+    assert_eq!(ctx.sender, state.owner, "Only owner can check");
     let mut new_state = state;
     
     if let Some(report) = new_state.maps1.get_mut(&id) {

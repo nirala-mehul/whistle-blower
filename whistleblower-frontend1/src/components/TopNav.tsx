@@ -1,4 +1,4 @@
-import { Avatar, Box, Link, Stack } from "@mui/material";
+import { Avatar, Box, LinearProgress, Link, Stack } from "@mui/material";
 import { Logo } from "../icons/logo";
 import WalletConnect from "./WalletConnect";
 import zIndex from "@mui/material/styles/zIndex";
@@ -9,7 +9,7 @@ import { MPCWalletLogo } from "../icons/mpc-logo";
 const TOP_NAV_HEIGHT = 64;
 
 export const TopNav = () => {
-  const { currentAccount } = useContext(Context);
+  const { currentAccount, loading } = useContext(Context);
   const avtarImgUrl = currentAccount
     ? "https://api.dicebear.com/7.x/pixel-art/svg?seed=" +
       currentAccount.address
@@ -51,6 +51,7 @@ export const TopNav = () => {
           <WalletConnect />
         </Stack>
       </Stack>
+      {loading && <LinearProgress />}
     </Box>
   );
 };

@@ -57,7 +57,7 @@ const Page = () => {
             editMode={false}
             open={open}
             onClose={onClose}
-            value={selectedReport?.description}
+            report={selectedReport}
           />
         </Container>
       </Box>

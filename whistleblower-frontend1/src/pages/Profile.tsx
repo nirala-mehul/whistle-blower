@@ -111,7 +111,7 @@ export default function Profile() {
         editMode={selectedReport === undefined}
         open={open}
         onClose={onClose}
-        value={selectedReport?.description}
+        report={selectedReport}
       />
     </Box>
   );

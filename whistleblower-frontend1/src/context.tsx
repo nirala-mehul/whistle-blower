@@ -38,6 +38,9 @@ export interface IContext {
   setContractState: (contractState: WhistleblowerState) => void;
 
   updateContractState: () => void;
+
+  loading: boolean;
+  setLoading: (loading: boolean) => void;
 }
 
 interface RawContractData {
@@ -53,6 +56,7 @@ export function AppContextWrapper({ children }: { children: JSX.Element }) {
   const [whistleblowerApi, setWhistleblowerApi] = useState<WhistleblowerApi>();
   const [psuedoID, setPseudoID] = useState<IPsuedoID>();
   const [contractState, setContractState] = useState<WhistleblowerState>();
+  const [loading, setLoading] = useState<boolean>(true);
 
   const updateContractState = () => {
     const address = contractAddress;
@@ -98,8 +102,6 @@ export function AppContextWrapper({ children }: { children: JSX.Element }) {
 
   useEffect(() => {
     if (currentAccount !== undefined && contractAbi !== undefined) {
-      const address = currentAccount.address;
-
       const transactionApi = new TransactionApi(
         currentAccount,
         updateContractState
@@ -131,6 +133,9 @@ export function AppContextWrapper({ children }: { children: JSX.Element }) {
     setContractState,
 
     updateContractState,
+
+    loading,
+    setLoading,
   };
 
   return <Context.Provider value={value}>{children}</Context.Provider>;
