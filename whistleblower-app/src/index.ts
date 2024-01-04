@@ -30,11 +30,6 @@ const allowSpecificOrigins = (req: Request, res: Response, next: any) => {
 // Use the middleware for all routes
 app.use(allowSpecificOrigins);
 
-
-app.get("/", (req: Request, res: Response) => {
-  res.send("Express + TypeScript Server");
-});
-
 app.get("/pseudonym", (req: Request, res: Response) => {
   const address: string | undefined = req.query.address?.toString();
   console.log(address);

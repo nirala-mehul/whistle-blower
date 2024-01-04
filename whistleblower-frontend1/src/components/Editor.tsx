@@ -28,8 +28,13 @@ export interface IEditorProps {
 }
 
 export const Editor = (props: IEditorProps) => {
-  const { whistleblowerApi, psuedoID, loading, setLoading, updateContractState } =
-    useContext(Context);
+  const {
+    whistleblowerApi,
+    psuedoID,
+    loading,
+    setLoading,
+    updateContractState,
+  } = useContext(Context);
   const [value, setValue] = useState(props.value ?? "");
 
   async function handleCreateReport() {

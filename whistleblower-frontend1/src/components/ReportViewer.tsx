@@ -33,7 +33,8 @@ export const ReportViewer = ({ report }: IProps) => {
   }
 
   const Action = () => {
-    const isDisabled = currentAccount == undefined || whistleblowerApi === undefined;
+    const isDisabled =
+      currentAccount == undefined || whistleblowerApi === undefined;
     return (
       <Box
         sx={{
@@ -51,7 +52,7 @@ export const ReportViewer = ({ report }: IProps) => {
           Upvote
         </Button>
         <Button
-        size="small"
+          size="small"
           startIcon={<ArrowCircleDown />}
           onClick={(e) => handleVote(false)}
           disabled={isDisabled}
