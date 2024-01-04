@@ -5,7 +5,8 @@ import { useContext } from "react";
 import { Context } from "./context";
 import { Button } from "@mui/material";
 import { SideNav } from "./components/SideNav";
-import { BrowserRouter } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Profile from "./pages/Profile";
 
 export default function Router() {
   const { whistleblowerApi } = useContext(Context);
@@ -18,7 +19,11 @@ export default function Router() {
     <BrowserRouter>
       <TopNav />
       <SideNav />
-      <DashBoard />
+      <Routes>
+        <Route path="/my" Component={Profile} />
+        <Route path="/" Component={DashBoard} />
+        <Route Component={NotFoundPage} />
+      </Routes>
     </BrowserRouter>
   );
 }

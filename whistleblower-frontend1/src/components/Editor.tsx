@@ -14,8 +14,6 @@ import {
 } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 import { BACKEND_URL } from "../constants";
-import ArrowUpward from "@mui/icons-material/ArrowUpward";
-import ArrowDownward from "@mui/icons-material/ArrowDownward";
 import {
   ArrowCircleDown,
   ArrowCircleUp,
@@ -37,15 +35,21 @@ export const Editor = (props: IEditorProps) => {
 
   async function handleCreateReport() {
     setLoading(true);
+
     // let compressed = deflateSync(value).toString("hex");
-    let data = await fetch(
-      BACKEND_URL + "/pseudonym?address=" + currentAccount?.address
+    let response = await fetch(
+      BACKEND_URL + "/pseudonym?address=aaa" + currentAccount?.address
     );
-    console.log(data);
+
+    console.log(response);
+    if (response.ok) {
+      const data = await response.json();
+      console.log(data);
+      // whistleblowerApi.addReport()
+    }
 
     setLoading(false);
     props?.onActionComplete();
-    // whistleblowerApi.addReport()
   }
 
   const Action = () => {

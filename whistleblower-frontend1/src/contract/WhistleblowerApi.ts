@@ -17,7 +17,12 @@
  */
 
 import { TransactionApi } from "../client/TransactionApi";
-import { vote, addReport, addWhistleblower, approve } from "./WhistleblowerGenerated";
+import {
+  vote,
+  addReport,
+  addWhistleblower,
+  approve,
+} from "./WhistleblowerGenerated";
 import { ContractAbi } from "@partisiablockchain/abi-client";
 
 /**
