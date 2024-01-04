@@ -1,4 +1,4 @@
-import { Link as RouterLink } from "react-router-dom";
+// import { Link as RouterLink } from "react-router-dom";
 import { Box, Button, Container, Typography } from "@mui/material";
 
 const Page = () => (
@@ -35,9 +35,6 @@ const Page = () => (
         <Typography align="center" color="text.secondary" variant="body2">
           The page requested does not exist.
         </Typography>
-        <Button to="/" component={RouterLink} sx={{ mt: 2 }}>
-          Take me home
-        </Button>
       </Container>
     </Box>
   </>

@@ -1,46 +1,83 @@
-import { Link as RouterLink } from "react-router-dom";
-import { Box, Button, Container, Typography } from "@mui/material";
+// import { Link as RouterLink } from "react-router-dom";
+import { Box, Container, Drawer, Fab, IconButton } from "@mui/material";
+import { useContext, useState } from "react";
 
-const Page = () => (
-  <>
-    <title>Error: Not Found | Carpatin Free</title>
-    <Box
-      sx={{
-        backgroundColor: "background.paper",
-        flexGrow: 1,
-      }}
-    >
-      <Container
-        maxWidth="md"
+import EditIcon from "@mui/icons-material/Edit";
+
+import { Context } from "../context";
+import { Editor } from "../components/Editor";
+import { CloseOutlined } from "@mui/icons-material";
+import ReportTable from "../components/ReportTable";
+import { Report } from "../contract/WhistleblowerGenerated";
+
+const Page = () => {
+  const { contractState } = useContext(Context);
+  const [open, setOpen] = useState(false);
+  const [selectedReport, setSelectedReport] = useState<Report>();
+  const fabStyle = {
+    position: "absolute",
+    bottom: 24,
+    right: 24,
+  };
+
+  const onClose = () => setOpen(false);
+
+  return (
+    <>
+      <title>Error: Not Found | Carpatin Free</title>
+
+      <Box
         sx={{
-          px: 5,
-          py: 14,
-          alignItems: "center",
-          display: "flex",
-          flexDirection: "column",
+          backgroundColor: "background.paper",
+          flexGrow: 1,
+          border: "2px solid black",
+          px: 10,
+          py: 10,
         }}
       >
-        <Box
+        <Container
           sx={{
-            "& img": {
-              maxWidth: "100%",
-            },
+            alignItems: "center",
+            p: 0,
+            m: "auto",
           }}
         >
-          <img src="/assets/illustration-not-found.svg" />
-        </Box>
-        <Typography align="center" sx={{ my: 2 }} variant="h3">
-          Nothing here!
-        </Typography>
-        <Typography align="center" color="text.secondary" variant="body2">
-          The page requested does not exist.
-        </Typography>
-        <Button to="/" component={RouterLink} sx={{ mt: 2 }}>
-          Take me home
-        </Button>
-      </Container>
-    </Box>
-  </>
-);
+          {contractState && (
+            <ReportTable
+              reports={Array.from(contractState.reports.values())}
+              onSelectReport={(report: Report) => {
+                setSelectedReport(report);
+                setOpen(true);
+              }}
+            />
+          )}
+
+          <Fab
+            sx={fabStyle}
+            color="primary"
+            aria-label="edit"
+            onClick={() => setOpen(true)}
+          >
+            <EditIcon />
+          </Fab>
+
+          <Drawer anchor={"right"} open={open} onClose={onClose}>
+            <IconButton
+              sx={{ position: "absolute", right: 10, top: 10 }}
+              onClick={onClose}
+            >
+              <CloseOutlined />
+            </IconButton>
+            <Editor
+              edit={false}
+              value={selectedReport?.description}
+              onActionComplete={onClose}
+            />
+          </Drawer>
+        </Container>
+      </Box>
+    </>
+  );
+};
 
 export default Page;

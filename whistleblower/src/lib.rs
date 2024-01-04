@@ -22,7 +22,9 @@ pub struct MapStruct {
     value: String,
     data: String,
     inc: u64,
-    dec: u64
+    dec: u64,
+    sx: u8,
+    timestamp: String
 }
 
 
@@ -67,7 +69,7 @@ fn add_address(ctx: ContractContext, state: ContractState, address: Address) -> 
 }
 
 #[action(shortname = 0x02)]
-fn add_map(ctx: ContractContext, state: ContractState, data: String, pkey: String, value: String) -> ContractState {
+fn add_map(ctx: ContractContext, state: ContractState,timestamp: String, data: String, pkey: String, value: String) -> ContractState {
     verify(ctx.sender, pkey, value.clone());
     assert!(state.addresses.contains(&ctx.sender), "Not an eligible");
 
@@ -76,10 +78,12 @@ fn add_map(ctx: ContractContext, state: ContractState, data: String, pkey: Strin
     let count = new_state.count;
     let report = MapStruct{
         id: count,
+        timestamp: timestamp,
         value: value.clone(),
         data: data,
         inc: 0,
-        dec: 0
+        dec: 0,
+        sx: 0
     };
 
     // Check if the key already exists in the map
@@ -101,11 +105,26 @@ fn add_map(ctx: ContractContext, state: ContractState, data: String, pkey: Strin
 }
 
 #[action(shortname = 0x03)]
-fn incc(ctx: ContractContext, state: ContractState, report_id: u64, upvote: bool) -> ContractState {
+fn check(ctx: ContractContext, state: ContractState, id: u64, yes: bool) -> ContractState {
     let mut new_state = state;
     
-    if let Some(report) = new_state.maps1.get_mut(&report_id) {
-        if upvote {
+    if let Some(report) = new_state.maps1.get_mut(&id) {
+        if yes {
+            report.sx = 2;
+        }
+        else {
+            report.sx = 1;
+        }
+    }
+    new_state
+}
+
+#[action(shortname = 0x04)]
+fn incc(ctx: ContractContext, state: ContractState, id: u64, check: bool) -> ContractState {
+    let mut new_state = state;
+    
+    if let Some(report) = new_state.maps1.get_mut(&id) {
+        if check {
             report.inc = report.inc+1;
         }
         else {

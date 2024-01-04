@@ -8,8 +8,9 @@ import { BigEndianByteOutput } from "@secata-public/bitmanipulation-ts";
 import { Rpc, TransactionPayload } from "../client/TransactionData";
 import { ec } from "elliptic";
 import { CryptoUtils } from "../client/CryptoUtils";
-import { useContext } from "react";
-import { Button } from "@mui/material";
+import { useContext, useState } from "react";
+import { Stack, Button, Modal, TextField, Typography } from "@mui/material";
+import { MPCWalletLogo } from "../icons/mpc-logo";
 
 interface MetamaskRequestArguments {
   /** The RPC method to request. */
@@ -25,12 +26,12 @@ interface MetaMask {
 /**
  * Structure of the raw data from a WASM contract.
  */
-interface RawContractData {
-  state: { data: string };
-}
+// interface RawContractData {
+//   state: { data: string };
+// }
 
 export default function WalletConnect() {
-  const { setCurrentAccount } = useContext(Context);
+  const { setCurrentAccount, currentAccount } = useContext(Context);
   const connectMetaMaskWalletClick = () => {
     handleWalletConnect(connectMetaMask());
   };
@@ -297,8 +298,66 @@ export default function WalletConnect() {
     setCurrentAccount(undefined);
   };
 
-  return <div>
+  const [open, setOpen] = useState(false);
+  const [privateKey, setPrivateKey] = useState("");
 
-    <Button onClick={connectMpcWalletClick}>Connect MPC</Button>
-  </div>;
+  return currentAccount !== undefined ? (
+    <div>
+      <Typography gutterBottom color="primary.main">
+        {currentAccount.address}
+      </Typography>
+    </div>
+  ) : (
+    <div>
+      <Button onClick={() => setOpen(!open)}>Sign In</Button>
+
+      <Modal
+        open={open}
+        onClose={() => setOpen(false)}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Stack
+          sx={{
+            position: "absolute" as "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "background.paper",
+            textAlign: "center",
+            justifyContent: "center",
+            p: 4,
+            borderRadius: 1,
+          }}
+          spacing={2}
+        >
+          <Button
+            variant="contained"
+            onClick={connectMpcWalletClick}
+            startIcon={<MPCWalletLogo />}
+          >
+            Connect MPC
+          </Button>
+          <Button variant="contained" onClick={connectMetaMaskWalletClick}>
+            Connect Metamask
+          </Button>
+
+          <TextField
+            id="private-key"
+            label="Private key"
+            variant="standard"
+            value={privateKey}
+            onChange={(e) => setPrivateKey(e.target.value)}
+          />
+          <Button
+            variant="contained"
+            onClick={() => connectPrivateKeyWalletClick(privateKey)}
+          >
+            Connect Private Key
+          </Button>
+        </Stack>
+      </Modal>
+    </div>
+  );
 }

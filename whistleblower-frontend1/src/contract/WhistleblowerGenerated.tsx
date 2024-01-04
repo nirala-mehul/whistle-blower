@@ -13,11 +13,13 @@ import {
 
 type Option<K> = K | undefined;
 
-interface Report {
+export interface Report {
   id: number;
+  timestamp: Date;
   whistleblower_pseudonym: string;
   description: string;
   claimed: boolean;
+  status: number;
   up_votes: number;
   down_votes: number;
 }
@@ -46,10 +48,14 @@ function fromScValueWhistleblowerState(
     const reportStruct = v as ScValueStruct;
     const report = {
       id: reportStruct.getFieldValue("id")?.asBN().toNumber(),
+      timestamp: new Date(
+        parseInt(reportStruct.getFieldValue("timestamp")?.stringValue())
+      ),
       whistleblower_pseudonym: reportStruct
         .getFieldValue("value")
         ?.stringValue(),
       description: reportStruct.getFieldValue("data")?.stringValue(),
+      status: reportStruct.getFieldValue("sx")?.asNumber(),
       up_votes: reportStruct.getFieldValue("inc")?.asBN().toNumber(),
       down_votes: reportStruct.getFieldValue("dec")?.asBN().toNumber(),
       claimed: false,
@@ -99,7 +105,10 @@ export function initialize(contractAbi: ContractAbi): Buffer {
   return fnBuilder.getBytes();
 }
 
-export function addWhistleblower(contractAbi: ContractAbi, address: string): Buffer {
+export function addWhistleblower(
+  contractAbi: ContractAbi,
+  address: string
+): Buffer {
   const fnBuilder = new FnRpcBuilder("add_address", contractAbi);
   fnBuilder.addAddress(address);
 
@@ -108,11 +117,13 @@ export function addWhistleblower(contractAbi: ContractAbi, address: string): Buf
 
 export function addReport(
   contractAbi: ContractAbi,
+  timestamp: string,
   report: string,
   public_key: string,
   pseudonym: string
 ): Buffer {
   const fnBuilder = new FnRpcBuilder("add_map", contractAbi);
+  fnBuilder.addString(timestamp);
   fnBuilder.addString(report);
   fnBuilder.addString(public_key);
   fnBuilder.addString(pseudonym);
@@ -120,7 +131,23 @@ export function addReport(
   return fnBuilder.getBytes();
 }
 
-export function vote(contractAbi: ContractAbi, reportId: number, upVote: boolean): Buffer {
+export function approve(
+  contractAbi: ContractAbi,
+  reportId: number,
+  approved: boolean
+): Buffer {
+  const fnBuilder = new FnRpcBuilder("check", contractAbi);
+  fnBuilder.addU64(reportId);
+  fnBuilder.addBool(approved);
+
+  return fnBuilder.getBytes();
+}
+
+export function vote(
+  contractAbi: ContractAbi,
+  reportId: number,
+  upVote: boolean
+): Buffer {
   const fnBuilder = new FnRpcBuilder("incc", contractAbi);
   fnBuilder.addU64(reportId);
   fnBuilder.addBool(upVote);

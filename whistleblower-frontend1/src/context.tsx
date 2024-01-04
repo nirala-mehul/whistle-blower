@@ -8,21 +8,23 @@ import {
   deserializeWhistleblowerState,
 } from "./contract/WhistleblowerGenerated";
 import React, { useEffect, useState } from "react";
-
-export const CONTRACT_ADDRESS = "02c913beb84eddc9be3b38a4b1ce626b6ef57fc7a7";
+import { CONTRACT_ADDRESS } from "./constants";
 
 export const CLIENT = new ShardedClient(
   "https://node1.testnet.partisiablockchain.com",
   ["Shard0", "Shard1", "Shard2"]
 );
 
-// AbiParser;
-
+interface IPsuedoID {
+  publicKey: string;
+  psuedonym: string;
+}
 
 export interface IContext {
   contractAddress: string | undefined;
   setContractAddress: (contractAddress: string) => void;
 
+  psuedoID: IPsuedoID;
   currentAccount: ConnectedWallet | undefined;
   setCurrentAccount: (currentAccount: ConnectedWallet) => void;
 
@@ -49,6 +51,7 @@ export function AppContextWrapper({ children }: { children: JSX.Element }) {
   const [currentAccount, setCurrentAccount] = useState<ConnectedWallet>();
   const [contractAddress, setContractAddress] = useState<string>();
   const [whistleblowerApi, setWhistleblowerApi] = useState<WhistleblowerApi>();
+  const [psuedoID, setPseudoID] = useState<IPsuedoID>();
   const [contractState, setContractState] = useState<WhistleblowerState>();
 
   const updateContractState = () => {
@@ -57,7 +60,7 @@ export function AppContextWrapper({ children }: { children: JSX.Element }) {
       throw new Error("No address provided");
     }
     CLIENT.getContractData<RawContractData>(address).then((contract) => {
-      if (contract != null) {
+      if (contract !== null) {
         // Reads the state of the contract
         if (contractAbi === undefined) {
           const abiBuffer = Buffer.from(contract.abi, "base64");
@@ -68,11 +71,14 @@ export function AppContextWrapper({ children }: { children: JSX.Element }) {
             contract.serializedContract.state.data,
             "base64"
           );
-  
-          const state = deserializeWhistleblowerState({ state: stateBuffer }, abi.contract);
+
+          const state = deserializeWhistleblowerState(
+            { state: stateBuffer },
+            abi.contract
+          );
           setContractState(state);
 
-          console.log(state)
+          console.log(state);
         }
       } else {
         throw new Error("Could not find data for contract");
@@ -81,22 +87,28 @@ export function AppContextWrapper({ children }: { children: JSX.Element }) {
   };
 
   useEffect(() => {
-    setContractAddress(CONTRACT_ADDRESS)
-  }, [])
+    setContractAddress(CONTRACT_ADDRESS);
+  }, []);
 
   useEffect(() => {
-    if (contractAddress != undefined) {
+    if (contractAddress !== undefined) {
       updateContractState();
     }
-  }, [contractAddress])
+  }, [contractAddress]);
 
   useEffect(() => {
-    if (currentAccount != undefined && contractAbi != undefined) {
+    if (currentAccount !== undefined && contractAbi !== undefined) {
+      const address = currentAccount.address;
+
       const transactionApi = new TransactionApi(
         currentAccount,
         updateContractState
       );
-      const _whistleblowerApi = new WhistleblowerApi(transactionApi, contractAbi, contractAddress);
+      const _whistleblowerApi = new WhistleblowerApi(
+        transactionApi,
+        contractAbi,
+        contractAddress
+      );
       setWhistleblowerApi(_whistleblowerApi);
     }
   }, [currentAccount, contractAbi]);
@@ -108,6 +120,7 @@ export function AppContextWrapper({ children }: { children: JSX.Element }) {
     currentAccount,
     setCurrentAccount,
 
+    psuedoID,
     contractAddress,
     setContractAddress,
 

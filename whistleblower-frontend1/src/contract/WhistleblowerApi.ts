@@ -17,9 +17,8 @@
  */
 
 import { TransactionApi } from "../client/TransactionApi";
-import { vote, addReport, addWhistleblower } from "./WhistleblowerGenerated";
+import { vote, addReport, addWhistleblower, approve } from "./WhistleblowerGenerated";
 import { ContractAbi } from "@partisiablockchain/abi-client";
-
 
 /**
  * API for the token contract.
@@ -33,10 +32,14 @@ export class WhistleblowerApi {
   private readonly contractAbi: ContractAbi;
   private readonly contractAddress: string;
 
-  constructor(transactionApi: TransactionApi, contractAbi: ContractAbi, contractAddress: string) {
+  constructor(
+    transactionApi: TransactionApi,
+    contractAbi: ContractAbi,
+    contractAddress: string
+  ) {
     this.transactionApi = transactionApi;
     this.contractAbi = contractAbi;
-    this.contractAddress = contractAddress
+    this.contractAddress = contractAddress;
   }
 
   readonly addWhistleblower = (whistleblower_address: string) => {
@@ -46,7 +49,11 @@ export class WhistleblowerApi {
     // First build the RPC buffer that is the payload of the transaction.
     const rpc = addWhistleblower(this.contractAbi, whistleblower_address);
     // Then send the payload via the transaction API.
-    return this.transactionApi.sendTransactionAndWait(this.contractAddress, rpc, 10_000);
+    return this.transactionApi.sendTransactionAndWait(
+      this.contractAddress,
+      rpc,
+      10_000
+    );
   };
 
   readonly addReport = (
@@ -57,10 +64,40 @@ export class WhistleblowerApi {
     if (this.contractAddress === undefined) {
       throw new Error("No address provided");
     }
+
+    const timestamp = new Date().getTime().toString();
+
     // First build the RPC buffer that is the payload of the transaction.
-    const rpc = addReport(this.contractAbi, report, public_key, pseudonym);
+    const rpc = addReport(
+      this.contractAbi,
+      timestamp,
+      report,
+      public_key,
+      pseudonym
+    );
     // Then send the payload via the transaction API.
-    return this.transactionApi.sendTransactionAndWait(this.contractAddress, rpc, 10_000);
+    return this.transactionApi.sendTransactionAndWait(
+      this.contractAddress,
+      rpc,
+      10_000
+    );
+  };
+
+  /**
+   * Build and send sign transaction.
+   */
+  readonly approve = (reportId: number, approved: boolean) => {
+    if (this.contractAddress === undefined) {
+      throw new Error("No address provided");
+    }
+    // First build the RPC buffer that is the payload of the transaction.
+    const rpc = approve(this.contractAbi, reportId, approved);
+    // Then send the payload via the transaction API.
+    return this.transactionApi.sendTransactionAndWait(
+      this.contractAddress,
+      rpc,
+      10_000
+    );
   };
 
   /**
@@ -73,6 +110,10 @@ export class WhistleblowerApi {
     // First build the RPC buffer that is the payload of the transaction.
     const rpc = vote(this.contractAbi, reportId, upvote);
     // Then send the payload via the transaction API.
-    return this.transactionApi.sendTransactionAndWait(this.contractAddress, rpc, 10_000);
+    return this.transactionApi.sendTransactionAndWait(
+      this.contractAddress,
+      rpc,
+      10_000
+    );
   };
 }

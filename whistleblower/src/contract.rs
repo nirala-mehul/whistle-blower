@@ -19,11 +19,13 @@ use hex;
 #[derive(ReadWriteState, CreateTypeSpec, Clone)]
 struct Report {
     id: u64,
+    timestamp: String,
     whistleblower_pseudonym: String,
     description: String,
     claimed: bool,
     up_votes: u64,
-    down_votes: u64
+    down_votes: u64,
+    status: u8
 }
 
 
@@ -68,7 +70,7 @@ fn add_whistleblower(ctx: ContractContext, state: ContractState, whistleblower: 
 }
 
 #[action(shortname = 0x02)]
-fn add_report(ctx: ContractContext, state: ContractState, report_description: String, pkey: String, whistleblower_pseudonym: String) -> ContractState {
+fn add_report(ctx: ContractContext, state: ContractState, timestamp: String, report_description: String, pkey: String, whistleblower_pseudonym: String) -> ContractState {
     verify(ctx.sender, pkey, whistleblower_pseudonym.clone());
     assert!(state.whistleblowers.contains(&ctx.sender), "Not an eligible whistleblower");
 
@@ -77,11 +79,13 @@ fn add_report(ctx: ContractContext, state: ContractState, report_description: St
     let report_count = new_state.report_count;
     let report = Report{
         id: report_count,
+        timestamp: timestamp,
         whistleblower_pseudonym: whistleblower_pseudonym.clone(),
         description: report_description,
         claimed: false,
         up_votes: 0,
-        down_votes: 0
+        down_votes: 0,
+        status: 0
     };
 
     // Check if the key already exists in the map
@@ -103,6 +107,23 @@ fn add_report(ctx: ContractContext, state: ContractState, report_description: St
 }
 
 #[action(shortname = 0x03)]
+fn approve(ctx: ContractContext, state: ContractState, report_id: u64, approve: bool) -> ContractState {
+    let mut new_state = state;
+    
+    if let Some(report) = new_state.reports.get_mut(&report_id) {
+        if approve {
+            report.status = 2;
+        }
+        else {
+            report.status = 1;
+        }
+    }
+
+    return new_state
+}
+
+
+#[action(shortname = 0x04)]
 fn vote(ctx: ContractContext, state: ContractState, report_id: u64, upvote: bool) -> ContractState {
     let mut new_state = state;
     
