@@ -5,22 +5,10 @@ import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
 import {
   Box,
-  Button,
   Divider,
-  IconButton,
-  Paper,
-  Stack,
   Typography,
 } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
-import { BACKEND_URL } from "../constants";
-import {
-  ArrowCircleDown,
-  ArrowCircleUp,
-  CancelOutlined,
-  CheckCircleOutline,
-} from "@mui/icons-material";
-import { isAdmin } from "../utils";
 
 export interface IEditorProps {
   value?: string;

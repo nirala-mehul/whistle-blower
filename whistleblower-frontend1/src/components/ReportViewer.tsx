@@ -34,7 +34,7 @@ export const ReportViewer = ({ report }: IProps) => {
 
   const Action = () => {
     const isDisabled =
-      currentAccount == undefined || whistleblowerApi === undefined;
+      currentAccount === undefined || whistleblowerApi === undefined;
     return (
       <Box
         sx={{
