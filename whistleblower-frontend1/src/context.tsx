@@ -58,7 +58,7 @@ export function AppContextWrapper({ children }: { children: JSX.Element }) {
   const [contractState, setContractState] = useState<WhistleblowerState>();
   const [loading, setLoading] = useState<boolean>(true);
 
-  const updateContractState = () => {
+  function updateContractState () {
     const address = contractAddress;
     if (address === undefined) {
       throw new Error("No address provided");
@@ -92,6 +92,7 @@ export function AppContextWrapper({ children }: { children: JSX.Element }) {
 
   useEffect(() => {
     setContractAddress(CONTRACT_ADDRESS);
+    setPseudoID(undefined);
   }, []);
 
   useEffect(() => {
