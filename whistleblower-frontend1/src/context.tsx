@@ -8,7 +8,7 @@ import {
   deserializeWhistleblowerState,
 } from "./contract/WhistleblowerGenerated";
 import React, { useEffect, useState } from "react";
-import { CONTRACT_ADDRESS } from "./constants";
+import { BACKEND_URL, CONTRACT_ADDRESS } from "./constants";
 
 export const CLIENT = new ShardedClient(
   "https://node1.testnet.partisiablockchain.com",
@@ -92,7 +92,6 @@ export function AppContextWrapper({ children }: { children: JSX.Element }) {
 
   useEffect(() => {
     setContractAddress(CONTRACT_ADDRESS);
-    setPseudoID(undefined);
   }, []);
 
   useEffect(() => {
@@ -113,6 +112,13 @@ export function AppContextWrapper({ children }: { children: JSX.Element }) {
         contractAddress
       );
       setWhistleblowerApi(_whistleblowerApi);
+
+      fetch(BACKEND_URL + "/api/pseudonym?address="+currentAccount.address).then(res => res.json()).then((data) => {
+        setPseudoID({
+          publicKey: data.publicKey,
+          psuedonym: data.signature
+        })
+      }).catch();
     }
   }, [currentAccount, contractAbi]);
 
