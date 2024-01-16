@@ -1,4 +1,3 @@
-import PropTypes from "prop-types";
 import { useTheme } from "@mui/material/styles";
 
 export const MPCWalletLogo = (props: any) => {

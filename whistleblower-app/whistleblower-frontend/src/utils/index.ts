@@ -1,7 +1,7 @@
 import { ADMIN } from "../constants";
 
 export function isAdmin(currentAccount?: any) {
-  return currentAccount != undefined && ADMIN === currentAccount.address;
+  return currentAccount !== undefined && ADMIN === currentAccount.address;
 }
 
 export function shortenTextWithEllipses(text: string) {

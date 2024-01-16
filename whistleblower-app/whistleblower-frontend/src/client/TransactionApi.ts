@@ -17,7 +17,7 @@
  */
 
 import { CLIENT } from "../context";
-import { ConnectedWallet } from "../client/ConnectedWallet";
+import { ConnectedWallet } from "./ConnectedWallet";
 import { ShardId } from "./TransactionData";
 
 export type CallbackPromise = Promise<string>;
