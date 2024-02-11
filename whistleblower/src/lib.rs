@@ -17,29 +17,30 @@ use ed25519_dalek::Verifier;
 use hex;
 
 #[derive(ReadWriteState, CreateTypeSpec, Clone)]
-pub struct MapStruct {
+struct Report {
     id: u64,
-    value: String,
-    data: String,
-    inc: u64,
-    dec: u64,
-    sx: u8,
-    timestamp: String
+    timestamp: String,
+    whistleblower_pseudonym: String,
+    description: String,
+    claimed: bool,
+    up_votes: u64,
+    down_votes: u64,
+    status: u8
 }
 
 
-/// The state of the address, which is persisted on-chain.
+/// The state of the whistleblower, which is persisted on-chain.
 #[state]
-pub struct ContractState {
+struct ContractState {
     pub owner: Address,
-    addresses: SortedVecSet<Address>,
-    maps: SortedVecMap<String, SortedVecSet<u64>>,
-    pub maps1: SortedVecMap<u64, MapStruct>,
-    pub count: u64
+    whistleblowers: SortedVecSet<Address>,
+    whistleblower_reports: SortedVecMap<String, SortedVecSet<u64>>,
+    pub reports: SortedVecMap<u64, Report>,
+    pub report_count: u64
 }
 
 
-/// Initialize a new address to sign.
+/// Initialize a new whistleblower to sign.
 ///
 /// # Arguments
 ///
@@ -47,103 +48,106 @@ pub struct ContractState {
 ///
 /// # Returns
 ///
-/// The initial state of the address, with no signers.
+/// The initial state of the whistleblower, with no signers.
 ///
 #[init]
 fn initialize(_ctx: ContractContext) -> ContractState {
     ContractState {
         owner: _ctx.sender,
-        maps: SortedVecMap::new(),
-        count: 0,
-        addresses: SortedVecSet::new(),
-        maps1: SortedVecMap::new()
+        reports: SortedVecMap::new(),
+        report_count: 0,
+        whistleblowers: SortedVecSet::new(),
+        whistleblower_reports: SortedVecMap::new()
     }
 }
 
 #[action(shortname = 0x01)]
-fn add_address(ctx: ContractContext, state: ContractState, address: Address) -> ContractState {
-    assert_eq!(ctx.sender, state.owner, "Only owner can add");
+fn add_whistleblower(ctx: ContractContext, state: ContractState, whistleblower: Address) -> ContractState {
+    assert_eq!(ctx.sender, state.owner, "Only owner can add whistleblower");
     let mut new_state = state;
-    new_state.addresses.insert(address);
+    new_state.whistleblowers.insert(whistleblower);
     new_state
 }
 
 #[action(shortname = 0x02)]
-fn add_map(ctx: ContractContext, state: ContractState,timestamp: String, data: String, pkey: String, value: String) -> ContractState {
-    verify(ctx.sender, pkey, value.clone());
-    assert!(state.addresses.contains(&ctx.sender), "Not an eligible");
+fn add_report(ctx: ContractContext, state: ContractState, timestamp: String, report_description: String, pkey: String, whistleblower_pseudonym: String) -> ContractState {
+    verify(ctx.sender, pkey, whistleblower_pseudonym.clone());
+    assert!(state.whistleblowers.contains(&ctx.sender), "Not an eligible whistleblower");
 
     let mut new_state = state;
 
-    let count = new_state.count;
-    let report = MapStruct{
-        id: count,
+    let report_count = new_state.report_count;
+    let report = Report{
+        id: report_count,
         timestamp: timestamp,
-        value: value.clone(),
-        data: data,
-        inc: 0,
-        dec: 0,
-        sx: 0
+        whistleblower_pseudonym: whistleblower_pseudonym.clone(),
+        description: report_description,
+        claimed: false,
+        up_votes: 0,
+        down_votes: 0,
+        status: 0
     };
 
     // Check if the key already exists in the map
-    if let Some(set) = new_state.maps.get_mut(&value) {
+    if let Some(set) = new_state.whistleblower_reports.get_mut(&whistleblower_pseudonym) {
         // If the key exists, insert the value into the set
-        set.insert(count);
+        set.insert(report_count);
     } else {
         // If the key doesn't exist, create a new set and insert the value
         let mut new_set = SortedVecSet::new();
-        new_set.insert(count);
+        new_set.insert(report_count);
 
-        new_state.maps.insert(value, new_set);
+        new_state.whistleblower_reports.insert(whistleblower_pseudonym, new_set);
     }
 
-    new_state.maps1.insert(count, report);
+    new_state.reports.insert(report_count, report);
 
-    new_state.count = count+1;
+    new_state.report_count = report_count+1;
     new_state
 }
 
 #[action(shortname = 0x03)]
-fn check(ctx: ContractContext, state: ContractState, id: u64, yes: bool) -> ContractState {
-    assert_eq!(ctx.sender, state.owner, "Only owner can check");
+fn approve(ctx: ContractContext, state: ContractState, report_id: u64, approve: bool) -> ContractState {
+    assert_eq!(ctx.sender, state.owner, "Only owner can approve");
     let mut new_state = state;
     
-    if let Some(report) = new_state.maps1.get_mut(&id) {
-        if yes {
-            report.sx = 2;
+    if let Some(report) = new_state.reports.get_mut(&report_id) {
+        if approve {
+            report.status = 2;
         }
         else {
-            report.sx = 1;
+            report.status = 1;
         }
     }
-    new_state
+
+    return new_state
 }
 
 #[action(shortname = 0x04)]
-fn incc(ctx: ContractContext, state: ContractState, id: u64, check: bool) -> ContractState {
+fn vote(ctx: ContractContext, state: ContractState, report_id: u64, upvote: bool) -> ContractState {
     let mut new_state = state;
     
-    if let Some(report) = new_state.maps1.get_mut(&id) {
-        if check {
-            report.inc = report.inc+1;
+    if let Some(report) = new_state.reports.get_mut(&report_id) {
+        if upvote {
+            report.up_votes = report.up_votes+1;
         }
         else {
-            report.dec = report.dec+1;
+            report.down_votes = report.down_votes+1;
         }
     }
-    new_state
+
+    return new_state
 }
 
-fn verify(address: Address, key: String, value: String) {
+fn verify(address: Address, public_key_hex: String, pseudonym_hex: String) {
     let mut user_address: [u8; 21] = [0; 21];
     user_address[1..].copy_from_slice(&address.identifier);
 
-    verify_signature(&key, &user_address,&value);
+    verify_signature(&public_key_hex, &user_address,&pseudonym_hex);
 }
 
-fn verify_signature(key: &str, message: &[u8], signature_hex: &str) {
-    let public_key = PublicKey::from_bytes(&hex::decode(key).unwrap()).unwrap();
+fn verify_signature(public_key_hex: &str, message: &[u8], signature_hex: &str) {
+    let public_key = PublicKey::from_bytes(&hex::decode(public_key_hex).unwrap()).unwrap();
     let signature: Signature = Signature::from_bytes(&hex::decode(signature_hex).unwrap()).unwrap();
     assert!(
         public_key.verify(&message, &signature).is_ok(),

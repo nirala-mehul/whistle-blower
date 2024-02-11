@@ -36,14 +36,14 @@ function fromScValueWhistleblowerState(
   structValue: ScValueStruct
 ): WhistleblowerState | any {
   let whistleblower_reports = new Map<string, number[]>();
-  (structValue.getFieldValue("maps") as ScValueMap).map.forEach((v, k) => {
+  (structValue.getFieldValue("whistleblower_reports") as ScValueMap).map.forEach((v, k) => {
     let whistleblower_pseudonym = k.stringValue();
     let reportIds = v.setValue().values.map((sc1) => sc1.asBN().toNumber());
     whistleblower_reports.set(whistleblower_pseudonym, reportIds);
   });
 
   let reports = new Map<number, Report>();
-  (structValue.getFieldValue("maps1") as ScValueMap).map.forEach((v, k) => {
+  (structValue.getFieldValue("reports") as ScValueMap).map.forEach((v, k) => {
     const reportId = (k as ScValueNumber).asBN().toNumber();
     const reportStruct = v as ScValueStruct;
     const report = {
@@ -54,10 +54,10 @@ function fromScValueWhistleblowerState(
       whistleblower_pseudonym: reportStruct
         .getFieldValue("value")
         ?.stringValue(),
-      description: reportStruct.getFieldValue("data")?.stringValue(),
-      status: reportStruct.getFieldValue("sx")?.asNumber(),
-      up_votes: reportStruct.getFieldValue("inc")?.asBN().toNumber(),
-      down_votes: reportStruct.getFieldValue("dec")?.asBN().toNumber(),
+      description: reportStruct.getFieldValue("description")?.stringValue(),
+      status: reportStruct.getFieldValue("status")?.asNumber(),
+      up_votes: reportStruct.getFieldValue("up_votes")?.asBN().toNumber(),
+      down_votes: reportStruct.getFieldValue("down_votes")?.asBN().toNumber(),
       claimed: false,
     } as Report;
 
@@ -66,7 +66,7 @@ function fromScValueWhistleblowerState(
 
   return {
     whistleblowers: structValue
-      .getFieldValue("addresses")!
+      .getFieldValue("whistleblowers")!
       .setValue()
       .values.map((sc1) =>
         BlockchainAddress.fromBuffer(sc1.addressValue().value)
@@ -76,7 +76,7 @@ function fromScValueWhistleblowerState(
     owner: BlockchainAddress.fromBuffer(
       structValue.getFieldValue("owner")!.addressValue().value
     ),
-    report_count: structValue.getFieldValue("count")!.asBN().toNumber(),
+    report_count: structValue.getFieldValue("report_count")!.asBN().toNumber(),
   };
 }
 
@@ -109,7 +109,7 @@ export function addWhistleblower(
   contractAbi: ContractAbi,
   address: string
 ): Buffer {
-  const fnBuilder = new FnRpcBuilder("add_address", contractAbi);
+  const fnBuilder = new FnRpcBuilder("add_whistleblower", contractAbi);
   fnBuilder.addAddress(address);
 
   return fnBuilder.getBytes();
@@ -122,7 +122,7 @@ export function addReport(
   public_key: string,
   pseudonym: string
 ): Buffer {
-  const fnBuilder = new FnRpcBuilder("add_map", contractAbi);
+  const fnBuilder = new FnRpcBuilder("add_report", contractAbi);
   fnBuilder.addString(timestamp);
   fnBuilder.addString(report);
   fnBuilder.addString(public_key);
@@ -136,7 +136,7 @@ export function approve(
   reportId: number,
   approved: boolean
 ): Buffer {
-  const fnBuilder = new FnRpcBuilder("check", contractAbi);
+  const fnBuilder = new FnRpcBuilder("approve", contractAbi);
   fnBuilder.addU64(reportId);
   fnBuilder.addBool(approved);
 
@@ -148,7 +148,7 @@ export function vote(
   reportId: number,
   upVote: boolean
 ): Buffer {
-  const fnBuilder = new FnRpcBuilder("incc", contractAbi);
+  const fnBuilder = new FnRpcBuilder("vote", contractAbi);
   fnBuilder.addU64(reportId);
   fnBuilder.addBool(upVote);
 
