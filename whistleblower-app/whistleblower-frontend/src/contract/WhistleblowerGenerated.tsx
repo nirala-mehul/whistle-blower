@@ -54,7 +54,7 @@ function fromScValueWhistleblowerState(
         parseInt(reportStruct.getFieldValue("timestamp")?.stringValue())
       ),
       whistleblower_pseudonym: reportStruct
-        .getFieldValue("value")
+        .getFieldValue("whistleblower_pseudonym")
         ?.stringValue(),
       description: reportStruct.getFieldValue("description")?.stringValue(),
       status: reportStruct.getFieldValue("status")?.asNumber(),

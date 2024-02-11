@@ -20,6 +20,8 @@ interface IProps {
 
 export const ReportViewer = ({ report }: IProps) => {
   const { whistleblowerApi, currentAccount, setLoading } = useContext(Context);
+  const isDisabled =
+    currentAccount === undefined || whistleblowerApi === undefined;
 
   async function handleVote(upVote: boolean) {
     setLoading(true);
@@ -34,15 +36,11 @@ export const ReportViewer = ({ report }: IProps) => {
   }
 
   const Action = () => {
-    const isDisabled =
-      currentAccount === undefined || whistleblowerApi === undefined;
     return (
-      <Box
-        sx={{
-          backgroundColor: "background.paper",
-          py: 2,
-        }}
-      >
+      <>
+{isDisabled && <Typography variant="overline" color={"red"}>Please sign in to take actions !</Typography>}  
+
+      <Box>
         <Button
           size="large"
           startIcon={<ArrowCircleUp />}
@@ -94,7 +92,7 @@ export const ReportViewer = ({ report }: IProps) => {
             </Button>
           </Stack>
         )}
-      </Box>
+      </Box></>
     );
   };
   return (

@@ -5,6 +5,7 @@ export function isAdmin(currentAccount?: any) {
 }
 
 export function shortenTextWithEllipses(text: string) {
+  if (text === undefined) return text;
   if (text.length < 12) return text;
 
   // Extract the first 6 characters
