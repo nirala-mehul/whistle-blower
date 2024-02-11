@@ -1,76 +1,74 @@
-# The DApp Playground for Partisia Blockchain
+![whistleblower](https://d6jxgaftxvagq.cloudfront.net/Pictures/1024x536/4/9/7/17497_whistleblower_499593.jpg)
 
-This a development environment for the Partisia Blockchain, made for creating applications and smart
-contracts utilizing the Zk Rust and public blockchain.
+## Inspiration
+The inspiration behind our project stems from the critical need for a secure and anonymous platform for whistleblowers to report wrongdoing without fear of reprisal or exposure. 
 
-Read the documentation to better understand
-[the fundamentals of the Partisia Blockchain](https://partisiablockchain.gitlab.io/documentation/pbc-fundamentals/introduction-to-the-fundamentals.html)
+**Whistleblowers** play a crucial role in uncovering corruption, fraud, and other unethical behavior, but often face significant risks when coming forward. 
 
-The repo contains two simple smart contracts with simple front-ends:
-The [whistleblower contact](https://gitlab.com/partisiablockchain/language/example-contracts/-/tree/main/whistleblower?ref_type=heads)
-and
-the [average salary contract](https://gitlab.com/partisiablockchain/language/example-contracts/-/tree/main/zk-average-salary?ref_type=heads)
-This is provided in a codespace, where all the tooling needed for developing smart contracts and
-front-ends is installed.
 
-To develop in your browser create a codespace for a repository,
-select the `main` branch. You can read
-more [here](https://docs.github.com/en/codespaces/developing-in-a-codespace/creating-a-codespace-for-a-repository#creating-a-codespace-for-a-repository)
+Our goal is to empower individuals to speak up and bring attention to injustices while protecting their identities and ensuring the integrity of their reports.
 
-Inside the codespace you can run predefined tasks by pressing `Ctrl+Shift+B`.
 
-## It is an Automated setup
+## What it does
+Our whistleblower app built on the Partisia blockchain provides a secure and anonymous platform for individuals to report misconduct, corruption, or other unethical behavior. 
+- Users can submit detailed reports, including evidence such as documents or multimedia files urls, through an encrypted channel. 
+- Reports are securely stored and the app ensures the anonymity of whistleblowers by utilizing advanced cryptographic techniques [described below](#anonymous-design) and the decentralized nature of the Partisia blockchain. 
 
-To interact with the Partisia Blockchain you need an account with gas.
-The codespace automatically provides you with three new accounts,
-`Account-A.pk`, `Account-B.pk` and `Account-C.pk`.
+## How we built it
 
-The created accounts have test_coins pre-minted which gives you 100.000.000 gas on the Testnet to
-interact, deploy and
-play around with as part of the codespace. You can continue using these outside of the codespace,
-just remember the private keys, because they are not saved when you delete the codespace.
+We built the whistleblower app using the Partisia blockchain platform, to make it secure and trustworthy we have added an additional layer of anonymity.
 
-Read how addresses works
-for [accounts and smart contracts](https://partisiablockchain.gitlab.io/documentation/pbc-fundamentals/dictionary.html#address).
+The id stored againstt the activity is replaced with psuedonym of the user. The pseudonym is generated based on the address and a private key which is hidden to the external world.
 
-## It is your own online personalized DApp playground
+Below diagram describes the steps to get a psuedo id.
 
-To use the codespace to develop your own DApps, fork the repository.
-On the fork you can modify the contract- and client code, to make your own DApp.
-To save your changes, use git to commit those changes to your forked repository.
+### Anonymous design
+![image (1)](https://github.com/nirala-mehul/whistle-blower/assets/88541725/404264cc-91e7-482c-a6bc-d7be46068d74)
 
-Read about using codespaces in a forked
-repository [here](https://www.freecodecamp.org/news/how-to-make-your-first-open-source-contribution/).
+- The add report action takes in input whistleblower_pseudonym and the report that needs to be stored against it.
+    ```rust
+    fn add_report(..., timestamp: String, report_description: String, pkey: String, whistleblower_pseudonym: String) -> ContractState {}
+    ```
 
-When forking the repository you can drastically decrease boot up time for new dev containers
-by [configuring prebuilds](https://docs.github.com/en/codespaces/prebuilding-your-codespaces/configuring-prebuilds).
+- It also has a `verify` function to make sure a user is only able to use their own psuedonym.
 
-If you want to do local development read
-the [dev container documentation](https://docs.github.com/en/codespaces/developing-in-a-codespace/using-github-codespaces-in-visual-studio-code).
+    ```rust
+    fn verify(address: Address, public_key_hex: String, pseudonym_hex: String) {
+        let mut user_address: [u8; 21] = [0; 21];
+        user_address[1..].copy_from_slice(&address.identifier);
 
-## Try, Learn and Interact with Partisia Blockchain
+        verify_signature(&public_key_hex, &user_address,&pseudonym_hex);
+    }
+    ```
 
-We have included 2 challenge-based tutorials as part of your codespace, to help you learn and
-experiment.
+### Backend & Frontend
 
-The first one explores the [Whistleblower example application](tutorial/whistleblower-example-application.md),
-showing how to collect signatures for showing interests in making specific changes in the world. The
-application consists of a smart contract written in Rust and a web frontend written in TypeScript.
+- The contract is written in [Rust](https://www.rust-lang.org/) using     `partisia-contract-sdk`. The backend is powered by `nodejs`.
 
-The second one explores
-the [Average Salary example application](tutorial/average-salary-example-application.md), showing
-how
-to compute the average salary of a group, without revealing the salary of any individual. This
-example
-uses the superpower of Partisia
-Blockchain,
-[Zk contracts](https://partisiablockchain.gitlab.io/documentation/smart-contracts/zk-smart-contracts/zk-smart-contracts.html).
-The
-application consists of a smart contract written in Rust
-and [Zk Rust](https://partisiablockchain.gitlab.io/documentation/smart-contracts/zk-smart-contracts/zk-rust-language-zkrust.html)
-and a web frontend written in TypeScript.
+- The frontend interface was developed using modern web technologies including `React` and `typescript`, providing a user-friendly experience for whistleblowers to submit reports securely.
 
-If you want to know more about the blockchain, ZK Rust or just contracts in general,
-we urge you to visit our [documentation](https://partisiablockchain.gitlab.io/documentation/) and
-participate
-in [our active community on Discord](https://partisiablockchain.gitlab.io/documentation/get-support-from-pbc-community.html).
+## Challenges we ran into
+
+One of the main challenges we encountered was designing a system that provides strong anonymity guarantees while maintaining usability and accessibility. 
+
+
+## Accomplishments that we're proud of
+
+We're proud to have successfully developed a whistleblower app that prioritizes user privacy and security without compromising on functionality. 
+
+Our app provides whistleblowers with a safe and confidential platform to report misconduct, empowering them to speak up against injustice
+
+## What we learned
+
+We gained valuable insights into the complexities of building secure and anonymous systems on blockchain platforms. 
+
+We deepened our understanding of cryptographic techniques and their applications in preserving user privacy. 
+
+Additionally, we learned about the challenges and trade-offs involved in designing user-friendly interfaces for secure communication and reporting.
+
+## What's next for Blow the whistle
+
+In the future, we plan to further enhance the features and capabilities of the whistleblower app. 
+
+- This includes implementing additional privacy-preserving measures, such as **zero-knowledge proofs**.
+- Reward system to promote whistle blowing.
