@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx tsc && node dist/index.js",
-    "build": "npx tsc",
+    "build-ui": "cd whistleblower-frontend && npm run build && cd ..",
+    "build": "npm run build-ui && npx tsc",
     "dev": "npx tsc && nodemon dist/index.js"
   },
   "keywords": [],
