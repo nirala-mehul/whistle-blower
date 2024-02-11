@@ -107,14 +107,16 @@ export default function Profile() {
         )}
       </Container>
 
-      <Fab
-        sx={fabStyle}
-        color="primary"
-        aria-label="edit"
-        onClick={() => setOpen(true)}
-      >
-        <AddIcon />
-      </Fab>
+      {isLoggedIn && (
+        <Fab
+          sx={fabStyle}
+          color="primary"
+          aria-label="edit"
+          onClick={() => setOpen(true)}
+        >
+          <AddIcon />
+        </Fab>
+      )}
 
       <MDDrawer
         editMode={selectedReport === undefined}

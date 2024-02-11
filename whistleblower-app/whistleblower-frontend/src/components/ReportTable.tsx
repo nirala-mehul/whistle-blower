@@ -218,7 +218,7 @@ export default function ReportTable({ reports, onSelectReport }: IProps) {
 function GetStatus(status?: number) {
   if (status) {
     if (status === 2) return <Chip label={"Approved"} icon={<CheckCircle />} />;
-    if (status === 1) return <Chip label={"None"} icon={<Cancel />} />;
+    if (status === 1) return <Chip label={"Rejected"} icon={<Cancel />} />;
   }
   return <Chip label={"Under review"} />;
 }
