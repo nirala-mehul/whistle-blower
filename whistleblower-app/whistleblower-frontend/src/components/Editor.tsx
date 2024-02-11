@@ -33,6 +33,7 @@ export const Editor = (props: IEditorProps) => {
     updateContractState();
     setLoading(false);
     props?.onActionComplete();
+    setValue("");
   }
 
   const Action = () => {

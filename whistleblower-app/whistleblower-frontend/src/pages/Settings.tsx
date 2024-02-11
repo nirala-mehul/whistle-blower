@@ -36,6 +36,7 @@ export default function Settings() {
     setLoading(true);
     await whistleblowerApi.addWhistleblower(value);
     setLoading(false);
+    setValue("");
   }
 
   return (
