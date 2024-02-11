@@ -3,10 +3,11 @@ import DashBoard from "./pages/Dashboard";
 import { TopNav } from "./components/TopNav";
 import { useContext, useEffect } from "react";
 import { Context } from "./context";
-import { Button } from "@mui/material";
+import { Box, Button, Toolbar } from "@mui/material";
 import { SideNav } from "./components/SideNav";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Profile from "./pages/Profile";
+import Settings from "./pages/Settings";
 
 export default function Router() {
   const { whistleblowerApi, setLoading } = useContext(Context);
@@ -23,11 +24,15 @@ export default function Router() {
     <BrowserRouter>
       <TopNav />
       <SideNav />
-      <Routes>
-        <Route path="/my" Component={Profile} />
-        <Route path="/" Component={DashBoard} />
-        <Route Component={NotFoundPage} />
-      </Routes>
+      <Toolbar />
+      <Box sx={{ ml: 10 }}>
+        <Routes>
+          <Route path="/settings" Component={Settings} />
+          <Route path="/my" Component={Profile} />
+          <Route path="/" Component={DashBoard} />
+          <Route Component={NotFoundPage} />
+        </Routes>
+      </Box>
     </BrowserRouter>
   );
 }

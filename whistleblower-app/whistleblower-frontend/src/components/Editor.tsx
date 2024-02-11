@@ -3,12 +3,9 @@ import { Context } from "../context";
 import MDEditor from "@uiw/react-md-editor";
 import "@uiw/react-md-editor/markdown-editor.css";
 import "@uiw/react-markdown-preview/markdown.css";
-import {
-  Box,
-  Divider,
-  Typography,
-} from "@mui/material";
+import { Box, Divider, Typography } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
+import lzString from "lz-string";
 
 export interface IEditorProps {
   value?: string;
@@ -27,8 +24,9 @@ export const Editor = (props: IEditorProps) => {
 
   async function handleCreateReport() {
     setLoading(true);
+    const compressed = lzString.compressToUTF16(value);
     await whistleblowerApi.addReport(
-      value,
+      compressed,
       psuedoID.publicKey,
       psuedoID.psuedonym
     );

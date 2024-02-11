@@ -1,5 +1,12 @@
-import { Avatar, Box, LinearProgress, Link, Stack } from "@mui/material";
-import { Logo } from "../icons/logo";
+import {
+  Avatar,
+  Box,
+  LinearProgress,
+  Link,
+  Stack,
+  Typography,
+} from "@mui/material";
+import Logo from "../icons/icon.png";
 import WalletConnect from "./WalletConnect";
 import zIndex from "@mui/material/styles/zIndex";
 import { useContext } from "react";
@@ -38,11 +45,22 @@ export const TopNav = () => {
           <Box
             sx={{
               display: "inline-flex",
-              height: 24,
-              width: 24,
+              height: 40,
+              width: 40,
             }}
           >
-            <Logo />
+            <img src={Logo} alt="logo" />
+          </Box>
+
+          <Box
+            sx={{
+              display: "inline-flex",
+              alignItems: "center",
+            }}
+          >
+            <Typography variant="h5" ml={1}>
+              WhistleBlower
+            </Typography>
             <MPCWalletLogo />
           </Box>
         </Stack>

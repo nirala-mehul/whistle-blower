@@ -12,6 +12,7 @@ import {
 } from "@mui/icons-material";
 import { isAdmin } from "../utils";
 import { Report } from "../contract/WhistleblowerGenerated";
+import lzString from "lz-string";
 
 interface IProps {
   report: Report;
@@ -105,7 +106,7 @@ export const ReportViewer = ({ report }: IProps) => {
       <div data-color-mode="light">
         <Paper sx={{ p: 2, mt: 2 }} elevation={5}>
           <MDEditor.Markdown
-            source={report.description}
+            source={lzString.decompressFromUTF16(report.description)}
             style={{ whiteSpace: "pre-wrap", height: 450 }}
           />
         </Paper>

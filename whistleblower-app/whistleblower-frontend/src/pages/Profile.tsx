@@ -37,7 +37,6 @@ export default function Profile() {
       sx={{
         backgroundColor: "background.paper",
         flexGrow: 1,
-        border: "2px solid black",
         px: 10,
         py: 10,
       }}

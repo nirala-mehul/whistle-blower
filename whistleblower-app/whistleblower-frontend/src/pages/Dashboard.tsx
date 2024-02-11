@@ -20,24 +20,47 @@ const Page = () => {
 
   return (
     <>
-      <title>Error: Not Found | Carpatin Free</title>
-
       <Box
         sx={{
           backgroundColor: "background.paper",
           flexGrow: 1,
-          border: "2px solid black",
           px: 10,
           py: 10,
         }}
       >
         <Container
           sx={{
+            justifyContent: "center",
             alignItems: "center",
             p: 0,
             m: "auto",
           }}
         >
+          {reports.length === 0 && (
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignContent: "center",
+                mt: 10,
+              }}
+            >
+              <Box>
+                <Typography variant="h3">Welcome to Whistleblower</Typography>
+                <Typography variant="body1">
+                  Welcome to Whistleblower, where integrity meets action. Our
+                  platform is dedicated to empowering individuals to raise their
+                  voices against wrongdoing, championing transparency,
+                  accountability, and positive change. Whether it's uncovering
+                  financial irregularities, exposing safety violations, or
+                  fighting against discrimination, we're here to support and
+                  amplify your efforts. Join us in making a difference, one
+                  courageous act of whistleblowing at a time.
+                </Typography>
+              </Box>
+            </Box>
+          )}
+
           {reports.length > 0 && (
             <>
               <Typography variant="h3">

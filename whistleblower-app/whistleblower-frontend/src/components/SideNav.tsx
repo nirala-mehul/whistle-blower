@@ -14,8 +14,31 @@ import ShoppingCartIcon from "@heroicons/react/24/solid/ShoppingCartIcon";
 import UserCircleIcon from "@heroicons/react/24/solid/UserCircleIcon";
 import StarIcon from "@heroicons/react/24/solid/StarIcon";
 import { SvgIcon } from "@mui/material";
+import { useContext } from "react";
+import { Context } from "../context";
 
 export const items = [
+  {
+    href: "/",
+    icon: (
+      <SvgIcon>
+        <ChartPieIcon />
+      </SvgIcon>
+    ),
+    label: "Home",
+  },
+  {
+    href: "/my",
+    icon: (
+      <SvgIcon>
+        <UserCircleIcon />
+      </SvgIcon>
+    ),
+    label: "Profile",
+  },
+];
+
+export const adminItems = [
   {
     href: "/",
     icon: (
@@ -43,33 +66,6 @@ export const items = [
     ),
     label: "Settings",
   },
-  //   {
-  //     href: '/theme',
-  //     icon: (
-  //       <SvgIcon>
-  //         <DocumentTextIcon />
-  //       </SvgIcon>
-  //     ),
-  //     label: 'Theme'
-  //   },
-  //   {
-  //     href: '/icons',
-  //     icon: (
-  //       <SvgIcon>
-  //         <StarIcon />
-  //       </SvgIcon>
-  //     ),
-  //     label: 'Icons'
-  //   },
-  //   {
-  //     href: '/404',
-  //     icon: (
-  //       <SvgIcon>
-  //         <ExclamationTriangleIcon />
-  //       </SvgIcon>
-  //     ),
-  //     label: 'Error'
-  //   }
 ];
 
 const SIDE_NAV_WIDTH = 73;
@@ -77,6 +73,9 @@ const TOP_NAV_HEIGHT = 64;
 
 export const SideNav = () => {
   const location = useLocation();
+  const { isAdmin } = useContext(Context);
+
+  console.log(isAdmin);
 
   return (
     <Drawer
@@ -96,7 +95,7 @@ export const SideNav = () => {
       }}
     >
       <List sx={{ width: "100%" }}>
-        {items.map((item) => {
+        {(isAdmin ? adminItems : items).map((item) => {
           const active = matchPath(
             { path: item.href, end: true },
             location.pathname

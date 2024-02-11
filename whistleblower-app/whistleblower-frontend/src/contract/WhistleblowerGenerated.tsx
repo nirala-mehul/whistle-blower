@@ -36,7 +36,9 @@ function fromScValueWhistleblowerState(
   structValue: ScValueStruct
 ): WhistleblowerState | any {
   let whistleblower_reports = new Map<string, number[]>();
-  (structValue.getFieldValue("whistleblower_reports") as ScValueMap).map.forEach((v, k) => {
+  (
+    structValue.getFieldValue("whistleblower_reports") as ScValueMap
+  ).map.forEach((v, k) => {
     let whistleblower_pseudonym = k.stringValue();
     let reportIds = v.setValue().values.map((sc1) => sc1.asBN().toNumber());
     whistleblower_reports.set(whistleblower_pseudonym, reportIds);

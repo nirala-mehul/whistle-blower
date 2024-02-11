@@ -8,7 +8,7 @@ import {
   deserializeWhistleblowerState,
 } from "./contract/WhistleblowerGenerated";
 import React, { useEffect, useState } from "react";
-import { BACKEND_URL, CONTRACT_ADDRESS } from "./constants";
+import { ADMIN, BACKEND_URL, CONTRACT_ADDRESS } from "./constants";
 
 export const CLIENT = new ShardedClient(
   "https://node1.testnet.partisiablockchain.com",
@@ -41,6 +41,8 @@ export interface IContext {
 
   loading: boolean;
   setLoading: (loading: boolean) => void;
+
+  isAdmin: boolean;
 }
 
 interface RawContractData {
@@ -58,7 +60,7 @@ export function AppContextWrapper({ children }: { children: JSX.Element }) {
   const [contractState, setContractState] = useState<WhistleblowerState>();
   const [loading, setLoading] = useState<boolean>(true);
 
-  function updateContractState () {
+  function updateContractState() {
     const address = contractAddress;
     if (address === undefined) {
       throw new Error("No address provided");
@@ -80,15 +82,16 @@ export function AppContextWrapper({ children }: { children: JSX.Element }) {
             { state: stateBuffer },
             abi.contract
           );
-          setContractState(state);
 
-          console.log(state);
+          setTimeout(() => {
+            setContractState(state);
+          }, 2000);
         }
       } else {
         throw new Error("Could not find data for contract");
       }
     });
-  };
+  }
 
   useEffect(() => {
     setContractAddress(CONTRACT_ADDRESS);
@@ -113,13 +116,16 @@ export function AppContextWrapper({ children }: { children: JSX.Element }) {
       );
       setWhistleblowerApi(_whistleblowerApi);
 
-      fetch(BACKEND_URL + "/api/pseudonym?address="+currentAccount.address).then(res => res.json()).then((data) => {
-        console.log(data);
-        setPseudoID({
-          publicKey: data.publicKey,
-          psuedonym: data.signature
+      fetch(BACKEND_URL + "/api/pseudonym?address=" + currentAccount.address)
+        .then((res) => res.json())
+        .then((data) => {
+          console.log(data);
+          setPseudoID({
+            publicKey: data.publicKey,
+            psuedonym: data.signature,
+          });
         })
-      }).catch(console.error);
+        .catch(console.error);
     }
   }, [currentAccount, contractAbi]);
 
@@ -144,6 +150,8 @@ export function AppContextWrapper({ children }: { children: JSX.Element }) {
 
     loading,
     setLoading,
+
+    isAdmin: currentAccount !== undefined && currentAccount.address === ADMIN,
   };
 
   return <Context.Provider value={value}>{children}</Context.Provider>;
