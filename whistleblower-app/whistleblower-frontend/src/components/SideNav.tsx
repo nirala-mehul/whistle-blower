@@ -16,6 +16,7 @@ import StarIcon from "@heroicons/react/24/solid/StarIcon";
 import { SvgIcon } from "@mui/material";
 import { useContext } from "react";
 import { Context } from "../context";
+import { isAdmin } from "../utils";
 
 export const items = [
   {
@@ -73,9 +74,7 @@ const TOP_NAV_HEIGHT = 64;
 
 export const SideNav = () => {
   const location = useLocation();
-  const { isAdmin } = useContext(Context);
-
-  console.log(isAdmin);
+  const {currentAccount} = useContext(Context)
 
   return (
     <Drawer
@@ -95,7 +94,7 @@ export const SideNav = () => {
       }}
     >
       <List sx={{ width: "100%" }}>
-        {(isAdmin ? adminItems : items).map((item) => {
+        {(isAdmin(currentAccount) ? adminItems : items).map((item) => {
           const active = matchPath(
             { path: item.href, end: true },
             location.pathname

@@ -38,7 +38,7 @@ export const ReportViewer = ({ report }: IProps) => {
   const Action = () => {
     return (
       <>
-{isDisabled && <Typography variant="overline" color={"red"}>Please sign in to take actions !</Typography>}  
+      {isDisabled && <Typography variant="overline" color={"red"}>Please sign in to take actions !</Typography>}  
 
       <Box>
         <Button
@@ -60,7 +60,7 @@ export const ReportViewer = ({ report }: IProps) => {
           Downvote
         </Button>
 
-        {isAdmin(currentAccount) && (
+        {isAdmin(currentAccount) && (report.status !== 2) && (
           <Stack
             sx={{
               display: "flex",

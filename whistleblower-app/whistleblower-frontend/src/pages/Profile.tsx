@@ -25,7 +25,6 @@ export default function Profile() {
     setOpen(false);
     setSelectedReport(undefined);
   };
-  console.log(psuedoID)
 
   let reports: Report[] = [],
     approvedReports: Report[] = [],
