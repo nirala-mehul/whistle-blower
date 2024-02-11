@@ -46,7 +46,11 @@ export default function MDDrawer({ open, onClose, editMode, report }: IProps) {
           </Stack>
         )}
       </Container>
-      {editMode ? <Editor value="" /> : <ReportViewer report={report} />}
+      {editMode ? (
+        <Editor value="" onActionComplete={onClose} />
+      ) : (
+        <ReportViewer report={report} onActionComplete={onClose} />
+      )}
     </Drawer>
   );
 }

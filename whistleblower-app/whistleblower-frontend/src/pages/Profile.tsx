@@ -10,7 +10,8 @@ import { Cancel, CheckCircle } from "@mui/icons-material";
 import MDDrawer from "../components/MDDrawer";
 
 export default function Profile() {
-  const { contractState, currentAccount, whistleblowerApi, psuedoID } = useContext(Context);
+  const { contractState, currentAccount, whistleblowerApi, psuedoID } =
+    useContext(Context);
   const [open, setOpen] = useState(false);
   const [selectedReport, setSelectedReport] = useState<Report>();
   const fabStyle = {
@@ -19,7 +20,10 @@ export default function Profile() {
     right: 24,
   };
 
-  const isLoggedIn = whistleblowerApi !== undefined && currentAccount !== undefined && currentAccount.address !== undefined;
+  const isLoggedIn =
+    whistleblowerApi !== undefined &&
+    currentAccount !== undefined &&
+    currentAccount.address !== undefined;
 
   const onClose = () => {
     setOpen(false);
@@ -31,7 +35,9 @@ export default function Profile() {
     rejectedReports: Report[] = [];
   if (contractState && isLoggedIn && psuedoID !== undefined) {
     let all = Array.from(contractState.reports.values());
-    reports = all.filter(report => report.whistleblower_pseudonym === psuedoID.psuedonym);
+    reports = all.filter(
+      (report) => report.whistleblower_pseudonym === psuedoID.psuedonym
+    );
     approvedReports = reports.filter((a: Report) => a.status && a.status === 2);
     rejectedReports = reports.filter((a: Report) => a.status && a.status === 1);
   }
@@ -51,7 +57,9 @@ export default function Profile() {
           p: 0,
           m: "auto",
         }}
-      > {!isLoggedIn && <Typography variant="h3">Please sign in !</Typography>}
+      >
+        {" "}
+        {!isLoggedIn && <Typography variant="h3">Please sign in !</Typography>}
         {reports.length > 0 && (
           <>
             <Typography variant="h3">
@@ -67,7 +75,6 @@ export default function Profile() {
             />
           </>
         )}
-
         {approvedReports.length > 0 && (
           <>
             <Typography variant="h3">
@@ -83,7 +90,6 @@ export default function Profile() {
             />
           </>
         )}
-
         {rejectedReports.length > 0 && (
           <>
             <Typography variant="h3">

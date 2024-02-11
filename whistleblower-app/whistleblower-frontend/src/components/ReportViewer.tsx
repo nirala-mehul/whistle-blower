@@ -16,9 +16,10 @@ import lzString from "lz-string";
 
 interface IProps {
   report: Report;
+  onActionComplete?: () => void;
 }
 
-export const ReportViewer = ({ report }: IProps) => {
+export const ReportViewer = ({ report, onActionComplete }: IProps) => {
   const { whistleblowerApi, currentAccount, setLoading } = useContext(Context);
   const isDisabled =
     currentAccount === undefined || whistleblowerApi === undefined;
@@ -33,66 +34,72 @@ export const ReportViewer = ({ report }: IProps) => {
     setLoading(true);
     await whistleblowerApi.approve(report.id, approve);
     setLoading(false);
+    onActionComplete();
   }
 
   const Action = () => {
     return (
       <>
-      {isDisabled && <Typography variant="overline" color={"red"}>Please sign in to take actions !</Typography>}  
-
-      <Box>
-        <Button
-          size="large"
-          startIcon={<ArrowCircleUp />}
-          onClick={(e) => handleVote(true)}
-          disabled={isDisabled}
-          endIcon={<>{report.up_votes}</>}
-        >
-          Upvote
-        </Button>
-        <Button
-          size="small"
-          startIcon={<ArrowCircleDown />}
-          onClick={(e) => handleVote(false)}
-          disabled={isDisabled}
-          endIcon={<>{report.down_votes}</>}
-        >
-          Downvote
-        </Button>
-
-        {isAdmin(currentAccount) && (report.status !== 2) && (
-          <Stack
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              alignItems: "flex-end",
-              mt: -2,
-            }}
-            direction={"row"}
-            spacing={3}
-          >
-            <Button
-              variant="contained"
-              size="medium"
-              disabled={isDisabled}
-              startIcon={<CheckCircleOutline />}
-              onClick={(e) => handleApprove(true)}
-            >
-              Accept
-            </Button>
-            <Button
-              variant="outlined"
-              size="medium"
-              color="error"
-              disabled={isDisabled}
-              startIcon={<CancelOutlined />}
-              onClick={(e) => handleApprove(false)}
-            >
-              Reject
-            </Button>
-          </Stack>
+        {isDisabled && (
+          <Typography variant="overline" color={"red"}>
+            Please sign in to take actions !
+          </Typography>
         )}
-      </Box></>
+
+        <Box>
+          <Button
+            size="large"
+            startIcon={<ArrowCircleUp />}
+            onClick={(e) => handleVote(true)}
+            disabled={isDisabled}
+            endIcon={<>{report.up_votes}</>}
+          >
+            Upvote
+          </Button>
+          <Button
+            size="small"
+            startIcon={<ArrowCircleDown />}
+            onClick={(e) => handleVote(false)}
+            disabled={isDisabled}
+            endIcon={<>{report.down_votes}</>}
+          >
+            Downvote
+          </Button>
+
+          {isAdmin(currentAccount) && report.status !== 2 && (
+            <Stack
+              sx={{
+                display: "flex",
+                justifyContent: "flex-end",
+                alignItems: "flex-end",
+                mt: -2,
+              }}
+              direction={"row"}
+              spacing={3}
+            >
+              <Button
+                variant="contained"
+                size="medium"
+                disabled={isDisabled}
+                startIcon={<CheckCircleOutline />}
+                onClick={(e) => handleApprove(true)}
+              >
+                Accept
+              </Button>
+              <Button
+                variant="outlined"
+                size="medium"
+                color="error"
+                disabled={isDisabled}
+                startIcon={<CancelOutlined />}
+                onClick={(e) => handleApprove(false)}
+              >
+                Reject
+              </Button>
+            </Stack>
+          )}
+        </Box>
+      </>
     );
   };
   return (

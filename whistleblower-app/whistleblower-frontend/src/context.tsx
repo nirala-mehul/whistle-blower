@@ -146,7 +146,7 @@ export function AppContextWrapper({ children }: { children: JSX.Element }) {
     updateContractState,
 
     loading,
-    setLoading
+    setLoading,
   };
 
   return <Context.Provider value={value}>{children}</Context.Provider>;

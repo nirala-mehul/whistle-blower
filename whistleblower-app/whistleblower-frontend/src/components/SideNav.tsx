@@ -74,7 +74,7 @@ const TOP_NAV_HEIGHT = 64;
 
 export const SideNav = () => {
   const location = useLocation();
-  const {currentAccount} = useContext(Context)
+  const { currentAccount } = useContext(Context);
 
   return (
     <Drawer
