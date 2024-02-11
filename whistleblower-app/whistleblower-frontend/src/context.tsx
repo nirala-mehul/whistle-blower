@@ -119,7 +119,6 @@ export function AppContextWrapper({ children }: { children: JSX.Element }) {
       fetch(BACKEND_URL + "/api/pseudonym?address=" + currentAccount.address)
         .then((res) => res.json())
         .then((data) => {
-          console.log(data);
           setPseudoID({
             publicKey: data.publicKey,
             psuedonym: data.signature,
